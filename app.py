@@ -92,6 +92,10 @@ def allowed_file(filename):
 def index():
     return send_from_directory('static-demo', 'index.html')
 
+@app.route('/giveaway')
+def giveaway():
+    return render_template('giveaway.html')
+
 @app.route('/pictures/<path:filename>')
 def serve_pictures(filename):
     return send_from_directory('static-demo/pictures', filename)
@@ -230,17 +234,6 @@ def upload_file():
             'path': f'pictures/{filename}'
         })
     return jsonify({'error': 'File type not allowed'}), 400
-
-@app.route('/giveaway')
-def giveaway():
-    try:
-        logging.info("Attempting to serve giveaway.html")
-        logging.info(f"Current directory: {os.getcwd()}")
-        logging.info(f"Files in static-demo: {os.listdir('static-demo')}")
-        return send_from_directory('static-demo', 'giveaway.html')
-    except Exception as e:
-        logging.error(f"Error serving giveaway.html: {str(e)}")
-        return str(e), 500
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')
