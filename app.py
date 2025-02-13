@@ -8,19 +8,28 @@ import os
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # Change this to a secure secret key
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///casino.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = os.path.join('static-demo', 'pictures')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # Initialize extensions
-db = SQLAlchemy()
+db = SQLAlchemy(app)
 login_manager = LoginManager()
-
-# Initialize the app with extensions
-db.init_app(app)
 login_manager.init_app(app)
 login_manager.login_view = 'admin_login'
+
+# Create database tables
+with app.app_context():
+    db.create_all()
+    # Create admin user if it doesn't exist
+    admin = User.query.filter_by(username='admin').first()
+    if not admin:
+        admin = User(username='admin')
+        admin.password_hash = generate_password_hash('123')
+        db.session.add(admin)
+        db.session.commit()
+        print("Admin user created successfully!")
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -171,20 +180,6 @@ def upload_file():
             'path': f'pictures/{filename}'
         })
     return jsonify({'error': 'File type not allowed'}), 400
-
-def init_db():
-    with app.app_context():
-        db.create_all()
-        # Check if admin user exists
-        admin = User.query.filter_by(username='admin').first()
-        if not admin:
-            admin = User(username='admin')
-            admin.set_password('123')
-            db.session.add(admin)
-            db.session.commit()
-
-# Initialize database
-init_db()
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')
