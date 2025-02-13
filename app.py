@@ -233,7 +233,14 @@ def upload_file():
 
 @app.route('/giveaway')
 def giveaway():
-    return send_from_directory('static-demo', 'giveaway.html')
+    try:
+        logging.info("Attempting to serve giveaway.html")
+        logging.info(f"Current directory: {os.getcwd()}")
+        logging.info(f"Files in static-demo: {os.listdir('static-demo')}")
+        return send_from_directory('static-demo', 'giveaway.html')
+    except Exception as e:
+        logging.error(f"Error serving giveaway.html: {str(e)}")
+        return str(e), 500
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')
