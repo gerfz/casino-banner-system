@@ -40,7 +40,10 @@ class User(UserMixin, db.Model):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        print(f"Checking password: stored hash = {self.password_hash}")
+        result = check_password_hash(self.password_hash, password)
+        print(f"Password check result: {result}")
+        return result
 
 class Banner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -75,17 +78,22 @@ def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        print(f"Login attempt - Username: {username}")  # Debug print
+        print(f"Login attempt - Username: {username}, Password: {password}")
         
         user = User.query.filter_by(username=username).first()
-        print(f"User found: {user is not None}")  # Debug print
+        print(f"User found: {user is not None}")
         
-        if user and user.check_password(password):
-            print("Password check passed")  # Debug print
-            login_user(user)
-            return redirect(url_for('admin_panel'))
+        if user:
+            print(f"User password hash: {user.password_hash}")
+            is_valid = user.check_password(password)
+            print(f"Password valid: {is_valid}")
+            
+            if is_valid:
+                login_user(user)
+                print("User logged in successfully")
+                return redirect(url_for('admin_panel'))
         
-        print("Login failed")  # Debug print
+        print("Login failed")
         flash('Invalid username or password')
     
     return render_template('admin_login.html')
