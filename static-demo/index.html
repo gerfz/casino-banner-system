@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Casino AdWall</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="main-nav">
+            <div class="nav-left">
+                <a href="index.html" class="logo">ysivitonen95</a>
+            </div>
+            <div class="nav-right">
+                <a href="#featured" class="nav-link">All Casinos</a>
+                <a href="#top-casinos" class="nav-link">New Casinos</a>
+                <a href="#new-casinos" class="nav-link">Top P&amp;P</a>
+                <a href="giveaway.html" class="nav-link">Giveaway</a>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero-section">
+        <h2 class="casino-of-month">Casino of the Month</h2>
+        <div class="featured-carousel swiper">
+            <div class="swiper-wrapper" id="banner-container">
+                <!-- Banners will be loaded dynamically -->
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </section>
+
+    <main class="site-main">
+        <section id="top-casinos" class="casino-section">
+            <h2 class="top-rated-title">Top Rated Casinos</h2>
+            <div class="casino-grid">
+                <!-- Top Casino 1 -->
+                <article class="casino-card top-rated">
+                    <div class="rank-badge">1</div>
+                    <div class="casino-logo">
+                        <img src="https://placehold.co/200x100/252525/ff2d55?text=Casino+1" alt="Casino 1">
+                    </div>
+                    <h3 class="casino-title">Spinz Casino</h3>
+                    <div class="casino-bonus">
+                        <span class="bonus-label">Welcome Package</span>
+                        <span class="bonus-amount">200% up to €500</span>
+                        <span class="bonus-extra">+ 100 Free Spins</span>
+                    </div>
+                    <div class="casino-features">
+                        <span class="feature">⚡ Instant Withdrawals</span>
+                        <span class="feature">🎮 Live Casino</span>
+                        <span class="feature">💳 Crypto Friendly</span>
+                    </div>
+                    <a href="#" class="casino-cta">
+                        Play Now
+                    </a>
+                </article>
+
+                <!-- Top Casino 2 -->
+                <article class="casino-card top-rated">
+                    <div class="rank-badge">2</div>
+                    <div class="casino-logo">
+                        <img src="https://placehold.co/200x100/252525/ff2d55?text=Casino+2" alt="Casino 2">
+                    </div>
+                    <h3 class="casino-title">Vice Casino</h3>
+                    <div class="casino-bonus">
+                        <span class="bonus-label">Welcome Package</span>
+                        <span class="bonus-amount">100% up to €300</span>
+                        <span class="bonus-extra">+ 150 Free Spins</span>
+                    </div>
+                    <div class="casino-features">
+                        <span class="feature">🎲 2000+ Games</span>
+                        <span class="feature">🏆 VIP Program</span>
+                        <span class="feature">💰 Daily Cashback</span>
+                    </div>
+                    <a href="#" class="casino-cta">
+                        Play Now
+                    </a>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>About Us</h4>
+                <p>Your trusted source for the best online casino reviews and bonuses.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="#top-casinos">Top Casinos</a>
+                <a href="#new-casinos">New Casinos</a>
+                <a href="giveaway.html">Giveaway</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ysivitonen95. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <script>
+        // Load banners
+        async function loadBanners() {
+            try {
+                const response = await fetch('/api/banners');
+                const banners = await response.json();
+                const container = document.getElementById('banner-container');
+                
+                banners.sort((a, b) => a.order - b.order);
+                container.innerHTML = banners.map(banner => `
+                    <div class="swiper-slide featured-casino">
+                        <div class="featured-content">
+                            <div class="featured-logo">
+                                <img src="${banner.logo_path}" alt="${banner.casino_name}">
+                            </div>
+                            <div class="featured-info">
+                                <div class="featured-bonus">
+                                    <span class="bonus-amount">${banner.bonus_amount}</span>
+                                    <span class="bonus-extra">${banner.bonus_extra}</span>
+                                </div>
+                                <a href="#" class="featured-cta">Play Now</a>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Initialize Swiper with the previous configuration
+                const swiper = new Swiper('.swiper', {
+                    slidesPerView: 3,
+                    centeredSlides: true,
+                    loop: true,
+                    speed: 600,
+                    spaceBetween: 40,
+                    initialSlide: banners.findIndex(banner => banner.is_focused),
+                    loopedSlides: 3,
+                    watchSlidesProgress: true,
+                    slideToClickedSlide: true,
+                    preventInteractionOnTransition: true,
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    breakpoints: {
+                        320: {
+                            slidesPerView: 1,
+                            spaceBetween: 20
+                        },
+                        768: {
+                            slidesPerView: 2,
+                            spaceBetween: 30
+                        },
+                        1024: {
+                            slidesPerView: 3,
+                            spaceBetween: 40
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading banners:', error);
+            }
+        }
+
+        // Load banners when page loads
+        document.addEventListener('DOMContentLoaded', loadBanners);
+    </script>
+</body>
+</html>

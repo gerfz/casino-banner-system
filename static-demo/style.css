@@ -1,0 +1,989 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #FFD700;
+    --primary-hover: #D4713B;
+    --secondary-color: #1A1A1A;
+    --background-dark: #1A1A1A;
+    --background-darker: #141414;
+    --text-light: #F5F5F5;
+    --text-gray: #9A9A9A;
+    --gradient-primary: linear-gradient(45deg, #FFD700, #D4713B);
+    --gradient-dark: linear-gradient(45deg, #1A1A1A, #2A2A2A);
+    --accent-orange: #D4713B;
+    --accent-gray: #4A4A4A;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    background-color: var(--background-dark);
+    color: var(--text-light);
+    min-height: 100vh;
+}
+
+/* Navigation */
+.site-header {
+    background-color: rgba(26, 26, 26, 0.95);
+    padding: 1rem 2rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.nav-right {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.nav-link {
+    color: var(--text-light);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    padding: 0.5rem 1rem;
+}
+
+.nav-link:hover {
+    color: var(--primary-color);
+}
+
+.nav-right .nav-link[href="giveaway.html"] {
+    background: var(--primary-color);
+    color: var(--background-dark);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-weight: 600;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.nav-right .nav-link[href="giveaway.html"]:hover {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    transform: translateY(-1px);
+}
+
+/* Special Giveaway Link Style */
+.nav-link[href="#exclusive"] {
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-orange));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: relative;
+    height: 36px;
+    padding: 0 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-link[href="#exclusive"]::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, var(--primary-color), var(--accent-orange));
+    border-radius: 20px;
+    opacity: 0.1;
+    transition: opacity 0.3s ease;
+}
+
+.nav-link[href="#exclusive"]:hover::before {
+    opacity: 0.2;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-3px);
+    }
+}
+
+/* Hero Section with Carousel */
+.hero-section {
+    margin-top: 80px;
+    padding: 2rem 0 4rem;
+    background: var(--background-dark);
+    position: relative;
+}
+
+.casino-of-month {
+    text-align: center;
+    color: var(--primary-color);
+    font-size: 2rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    letter-spacing: 1px;
+}
+
+.featured-carousel {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    padding: 4rem 0;
+}
+
+.swiper-wrapper {
+    align-items: center;
+    display: flex;
+}
+
+.swiper-slide {
+    transition: all 0.5s ease;
+    opacity: 0.5;
+}
+
+.swiper-slide .featured-casino {
+    height: 280px;
+}
+
+.swiper-slide-active {
+    opacity: 1;
+    z-index: 2;
+}
+
+.swiper-slide-active .featured-casino {
+    height: 380px;
+}
+
+.swiper-slide-prev,
+.swiper-slide-next {
+    opacity: 0.6;
+    z-index: 1;
+}
+
+.featured-casino {
+    background: var(--background-darker);
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    transition: all 0.3s ease;
+}
+
+.featured-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2.5rem;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+.featured-logo {
+    width: 100%;
+    max-width: 200px;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.swiper-slide-active .featured-logo {
+    max-width: 320px;
+}
+
+.featured-logo img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    max-height: 60px;
+}
+
+.swiper-slide-active .featured-logo img {
+    max-height: 100px;
+}
+
+.featured-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.featured-bonus {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bonus-amount {
+    font-size: 1.2rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.swiper-slide-active .bonus-amount {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.bonus-extra {
+    color: var(--text-gray);
+    font-size: 0.8rem;
+    margin-top: -1rem;
+}
+
+.swiper-slide-active .bonus-extra {
+    font-size: 1.1rem;
+}
+
+.featured-cta {
+    display: inline-block;
+    text-decoration: none;
+    background: var(--primary-color);
+    color: var(--background-dark);
+    padding: 0.6rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+}
+
+.swiper-slide-active .featured-cta {
+    padding: 0.8rem 2.5rem;
+    font-size: 1rem;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+    color: var(--primary-color);
+}
+
+.swiper-pagination-bullet {
+    background: var(--primary-color);
+}
+
+/* Navigation arrows */
+.swiper-button-next,
+.swiper-button-prev {
+    width: 40px !important;
+    height: 40px !important;
+    background: var(--background-darker);
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    color: var(--primary-color) !important;
+    transition: all 0.3s ease;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+}
+
+.swiper-button-next {
+    right: 5% !important;
+}
+
+.swiper-button-prev {
+    left: 5% !important;
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+    font-size: 18px !important;
+    font-weight: bold;
+}
+
+.swiper-pagination {
+    position: absolute;
+    bottom: 0 !important;
+}
+
+.swiper-pagination-bullet {
+    width: 8px !important;
+    height: 8px !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    opacity: 1 !important;
+    margin: 0 6px !important;
+}
+
+.swiper-pagination-bullet-active {
+    background: var(--primary-color) !important;
+    transform: scale(1.2);
+}
+
+/* Casino Grid */
+.casino-section {
+    padding: 4rem 0;
+}
+
+.casino-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.casino-card {
+    background: rgba(26, 26, 26, 0.95);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 215, 0, 0.1);
+    position: relative;
+}
+
+.rank-badge {
+    position: absolute;
+    top: -15px;
+    left: -15px;
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+    color: var(--background-dark);
+}
+
+.casino-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 25px rgba(255, 215, 0, 0.2);
+    border-color: var(--primary-color);
+}
+
+.casino-logo {
+    max-width: 200px;
+    height: auto;
+    margin: 0 auto 1.5rem;
+    border-radius: 10px;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.casino-logo img {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+.casino-title {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.casino-bonus {
+    background: rgba(255, 215, 0, 0.1);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.casino-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.feature {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+}
+
+.casino-cta {
+    display: inline-block;
+    background: var(--gradient-primary);
+    color: var(--background-dark);
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.casino-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+}
+
+/* Giveaway Page Styles */
+.giveaway-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+    padding-top: 6rem; /* Add space for fixed navbar */
+}
+
+.giveaway-title {
+    color: var(--text-light);
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    font-weight: 500;
+}
+
+.giveaway-card {
+    background: var(--background-darker);
+    border-radius: 20px;
+    overflow: hidden;
+    padding: 0 0 2rem 0;
+    position: relative;
+}
+
+.giveaway-image {
+    width: 100%;
+    height: 400px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px 20px 0 0;
+}
+
+.giveaway-name {
+    color: var(--text-light);
+    font-size: 2rem;
+    padding: 1.5rem 2rem;
+    margin: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.giveaway-details {
+    padding: 2rem;
+}
+
+.prize-section {
+    text-align: center;
+    position: relative;
+    padding: 2rem;
+}
+
+.prize-section h3 {
+    color: var(--primary-color);
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.prize-box {
+    background: linear-gradient(45deg, var(--background-dark), #1a1a1a);
+    color: var(--primary-color);
+    padding: 2rem 3rem;
+    border-radius: 15px;
+    font-size: 3rem;
+    font-weight: 800;
+    display: inline-block;
+    position: relative;
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.prize-box::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, var(--primary-color), transparent);
+    border-radius: 15px;
+    z-index: -1;
+    opacity: 0.3;
+    filter: blur(10px);
+}
+
+.prize-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+}
+
+.prize-box:hover::before {
+    opacity: 0.5;
+    filter: blur(15px);
+}
+
+.prize-section::before,
+.prize-section::after {
+    display: none;
+}
+
+.how-to-section {
+    margin-top: 3rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 3rem;
+}
+
+.how-to-section h3,
+.terms-section h3 {
+    color: var(--text-gray);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.how-to-section p {
+    color: var(--text-light);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.giveaway-actions {
+    display: flex;
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.giveaway-button {
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+}
+
+.giveaway-button.dark {
+    background: var(--background-dark);
+    color: var(--text-light);
+    flex: 1;
+}
+
+.giveaway-button.orange {
+    background: var(--primary-color);
+    color: var(--background-dark);
+    flex: 1;
+}
+
+.button-logo {
+    height: 24px;
+    width: auto;
+}
+
+.arrow-icon {
+    font-size: 1.2rem;
+}
+
+.terms-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.terms-section li {
+    color: var(--text-gray);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* Add green glow effects */
+.giveaway-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 30%, rgba(39, 174, 96, 0.3) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.giveaway-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 70% 70%, rgba(39, 174, 96, 0.2) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+/* Registration Modal Styles */
+.register-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.register-modal .modal-content {
+    background-color: #1a1a1a;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+}
+
+.register-modal .close-button {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.register-modal .close-button:hover {
+    color: #fff;
+}
+
+.register-modal .modal-content h2 {
+    color: white;
+    margin-bottom: 1rem;
+    font-size: 24px;
+}
+
+.register-modal .promo-button {
+    background-color: #ff8c00;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.register-modal .form-group {
+    margin-bottom: 1rem;
+}
+
+.register-modal .form-group label {
+    display: block;
+    color: white;
+    margin-bottom: 0.5rem;
+    font-size: 14px;
+}
+
+.register-modal .form-group input {
+    width: 100%;
+    padding: 10px;
+    background-color: #2a2a2a;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+}
+
+.register-modal .form-group input::placeholder {
+    color: #666;
+}
+
+.register-modal .required {
+    color: red;
+    margin-left: 3px;
+}
+
+.register-modal .submit-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.register-modal .submit-button:hover {
+    background-color: #219a52;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: var(--background-darker);
+    border-radius: 15px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.modal-header h2 {
+    color: var(--text-light);
+    font-size: 2rem;
+    margin: 0;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    color: var(--text-gray);
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.close-modal:hover {
+    color: var(--text-light);
+}
+
+.modal-subtitle {
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    padding: 1rem;
+    background: linear-gradient(45deg, var(--background-dark), #1a1a1a);
+    border-radius: 8px;
+    border: 1px solid var(--primary-color);
+}
+
+.registration-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.required {
+    color: #ff4444;
+    margin-left: 0.2rem;
+}
+
+.form-group input {
+    background: var(--background-dark);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.submit-button {
+    background: #27AE60;
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.submit-button:hover {
+    background: #219a52;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+}
+
+/* Footer */
+.site-footer {
+    background-color: var(--background-darker);
+    padding: 4rem 2rem 2rem;
+    margin-top: 4rem;
+    border-top: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.footer-section h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.footer-section a {
+    color: var(--text-gray);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.footer-section a:hover {
+    color: var(--primary-color);
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-gray);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .featured-content {
+        padding: 2rem 4rem;
+        gap: 2rem;
+    }
+
+    .featured-logo {
+        flex: 0 0 250px;
+    }
+
+    .featured-info h3 {
+        font-size: 2rem;
+    }
+
+    .bonus-amount {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 5rem 2rem 2rem;
+    }
+
+    .featured-content {
+        flex-direction: column;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .featured-logo {
+        flex: 0 0 200px;
+    }
+
+    .swiper-button-next,
+    .swiper-button-prev {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    .swiper-button-next {
+        right: 10px !important;
+    }
+
+    .swiper-button-prev {
+        left: 10px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .site-header {
+        padding: 1rem;
+    }
+
+    .main-nav {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .nav-right {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    .featured-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .featured-logo {
+        flex: 0 0 auto;
+        max-width: 250px;
+        margin: 0 auto;
+    }
+
+    .casino-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+}

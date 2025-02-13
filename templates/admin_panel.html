@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Banner Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #1a1a1a;
+            margin: 0;
+            padding: 20px;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #ff2d55;
+            margin-bottom: 2rem;
+        }
+        .banner-list {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .banner-item {
+            background-color: #252525;
+            padding: 1rem;
+            border-radius: 10px;
+            display: grid;
+            grid-template-columns: 100px 1fr 2fr auto;
+            align-items: center;
+            gap: 1rem;
+        }
+        .banner-form {
+            background-color: #252525;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        input, select {
+            padding: 0.8rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            background-color: #ff2d55;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #ff1a45;
+        }
+        button.delete {
+            background-color: #dc3545;
+        }
+        button.delete:hover {
+            background-color: #c82333;
+        }
+        .banner-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            background-color: #dc3545;
+            display: none;
+        }
+        .success {
+            background-color: #28a745;
+        }
+        .logo-preview {
+            width: 100px;
+            height: 50px;
+            object-fit: contain;
+            background-color: #333;
+            border-radius: 5px;
+        }
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .file-upload input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            font-size: 100px;
+            text-align: right;
+            filter: alpha(opacity=0);
+            opacity: 0;
+            outline: none;
+            background: white;
+            cursor: pointer;
+            display: block;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 0.8rem;
+            background-color: #333;
+            border-radius: 5px;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        .radio-group input[type="radio"] {
+            width: auto;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Banner Management</h1>
+        <div id="alert" class="alert"></div>
+        
+        <div class="banner-form">
+            <h2>Add New Banner</h2>
+            <form id="addBannerForm">
+                <div class="form-grid">
+                    <input type="text" id="casino_name" placeholder="Casino Name" required>
+                    <div>
+                        <div class="file-upload">
+                            <button type="button" style="width: 100%">Choose Logo File</button>
+                            <input type="file" id="logo_file" accept=".png,.jpg,.jpeg,.gif" onchange="handleFileSelect(this)">
+                        </div>
+                        <input type="hidden" id="logo_path" required>
+                        <img id="logo_preview" class="logo-preview" style="display: none;">
+                    </div>
+                    <input type="text" id="bonus_amount" placeholder="Header Text (e.g. 300% up to €1500)" required>
+                    <input type="text" id="bonus_extra" placeholder="Subtext (e.g. +150 Free Spins)" required>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="is_focused" id="is_focused_true" value="true">
+                            Display First
+                        </label>
+                        <label>
+                            <input type="radio" name="is_focused" id="is_focused_false" value="false" checked>
+                            Regular Order
+                        </label>
+                    </div>
+                    <input type="number" id="order" placeholder="Order (1-3)" min="1" max="3" required>
+                </div>
+                <button type="submit">Add Banner</button>
+            </form>
+        </div>
+
+        <h2>Current Banners</h2>
+        <div id="bannerList" class="banner-list">
+            <!-- Banners will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        async function handleFileSelect(fileInput) {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById('logo_path').value = result.path;
+                    const preview = document.getElementById('logo_preview');
+                    preview.src = result.path;
+                    preview.style.display = 'block';
+                    showAlert('Logo uploaded successfully', true);
+                } else {
+                    showAlert(result.error);
+                }
+            } catch (error) {
+                showAlert('Error uploading logo');
+            }
+        }
+
+        // Load banners
+        async function loadBanners() {
+            const response = await fetch('/api/banners');
+            const banners = await response.json();
+            const bannerList = document.getElementById('bannerList');
+            bannerList.innerHTML = '';
+            
+            banners.sort((a, b) => a.order - b.order);
+            banners.forEach(banner => {
+                const div = document.createElement('div');
+                div.className = 'banner-item';
+                div.innerHTML = `
+                    <img src="${banner.logo_path}" alt="${banner.casino_name}" class="logo-preview">
+                    <div>
+                        <strong>${banner.casino_name}</strong>
+                        <br>Order: ${banner.order}
+                        <br>Display First: ${banner.is_focused ? 'Yes' : 'No'}
+                    </div>
+                    <div>
+                        <div>Header: ${banner.bonus_amount}</div>
+                        <div>Subtext: ${banner.bonus_extra}</div>
+                    </div>
+                    <div class="banner-controls">
+                        <button onclick="editBanner(${banner.id})">Edit</button>
+                        <button class="delete" onclick="deleteBanner(${banner.id})">Delete</button>
+                    </div>
+                `;
+                bannerList.appendChild(div);
+            });
+        }
+
+        // Add banner
+        document.getElementById('addBannerForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = {
+                casino_name: document.getElementById('casino_name').value,
+                logo_path: document.getElementById('logo_path').value,
+                bonus_amount: document.getElementById('bonus_amount').value,
+                bonus_extra: document.getElementById('bonus_extra').value,
+                is_focused: document.querySelector('input[name="is_focused"]:checked').value,
+                order: parseInt(document.getElementById('order').value)
+            };
+
+            try {
+                const response = await fetch('/api/banners', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                if (response.ok) {
+                    showAlert(result.message, true);
+                    loadBanners();
+                    e.target.reset();
+                    document.getElementById('logo_preview').style.display = 'none';
+                } else {
+                    showAlert(result.error);
+                }
+            } catch (error) {
+                showAlert('Error adding banner');
+            }
+        };
+
+        // Delete banner
+        async function deleteBanner(id) {
+            if (!confirm('Are you sure you want to delete this banner?')) return;
+            
+            try {
+                const response = await fetch(`/api/banners/${id}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                showAlert(result.message, true);
+                loadBanners();
+            } catch (error) {
+                showAlert('Error deleting banner');
+            }
+        }
+
+        // Edit banner
+        async function editBanner(id) {
+            const response = await fetch('/api/banners');
+            const banners = await response.json();
+            const banner = banners.find(b => b.id === id);
+            
+            if (banner) {
+                document.getElementById('casino_name').value = banner.casino_name;
+                document.getElementById('logo_path').value = banner.logo_path;
+                document.getElementById('bonus_amount').value = banner.bonus_amount;
+                document.getElementById('bonus_extra').value = banner.bonus_extra;
+                document.querySelector(`input[name="is_focused"][value="${banner.is_focused}"]`).checked = true;
+                document.getElementById('order').value = banner.order;
+                
+                const preview = document.getElementById('logo_preview');
+                preview.src = banner.logo_path;
+                preview.style.display = 'block';
+                
+                document.getElementById('addBannerForm').onsubmit = async (e) => {
+                    e.preventDefault();
+                    const formData = {
+                        casino_name: document.getElementById('casino_name').value,
+                        logo_path: document.getElementById('logo_path').value,
+                        bonus_amount: document.getElementById('bonus_amount').value,
+                        bonus_extra: document.getElementById('bonus_extra').value,
+                        is_focused: document.querySelector('input[name="is_focused"]:checked').value,
+                        order: parseInt(document.getElementById('order').value)
+                    };
+
+                    try {
+                        const response = await fetch(`/api/banners/${id}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(formData)
+                        });
+                        
+                        const result = await response.json();
+                        showAlert(result.message, true);
+                        loadBanners();
+                        
+                        // Reset form and submit handler
+                        e.target.reset();
+                        document.getElementById('logo_preview').style.display = 'none';
+                        document.getElementById('addBannerForm').onsubmit = null;
+                        location.reload();
+                    } catch (error) {
+                        showAlert('Error updating banner');
+                    }
+                };
+            }
+        }
+
+        function showAlert(message, success = false) {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.style.display = 'block';
+            alert.className = `alert ${success ? 'success' : ''}`;
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initial load
+        loadBanners();
+    </script>
+</body>
+</html>

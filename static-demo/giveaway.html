@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giveaways - Casino Promotions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="main-nav">
+            <div class="nav-left">
+                <a href="index.html" class="logo">ysivitonen95</a>
+            </div>
+            <div class="nav-right">
+                <a href="#featured" class="nav-link">All Casinos</a>
+                <a href="#top-casinos" class="nav-link">New Casinos</a>
+                <a href="#new-casinos" class="nav-link">Top P&P</a>
+                <a href="giveaway.html" class="nav-link active">Giveaway</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="giveaway-container">
+        <h1 class="giveaway-title">Giveaways</h1>
+        
+        <div class="giveaway-card">
+            <div class="giveaway-image">
+                <img src="pictures/poker-table.jpg" alt="GiveAwayBanner">
+            </div>
+            
+            <h2 class="giveaway-name">Giveaway-Name!</h2>
+            
+            <div class="giveaway-details">
+                <div class="prize-section">
+                    <h3>Prize</h3>
+                    <div class="prize-box">-500k</div>
+                </div>
+                
+                <div class="how-to-section">
+                    <h3>How to participate</h3>
+                    <p>Sign up today and fill out the registration form (Name, User ID, and Email).</p>
+                    <p>We believe our high rollers and regular players shouldn't have to grind through thousands of hands to reach a standard rakeback level.</p>
+                    <p>With us, you start with 30% rakeback from your very first hand!</p>
+                    <p>Simply sign up, complete the form, and enjoy 30% rakeback on your account in no time!</p>
+                </div>
+                
+                <div class="giveaway-actions">
+                    <a href="#" class="giveaway-button dark">
+                        <img src="logo" alt="CasinoSiteName" class="button-logo">
+                        <span class="arrow-icon">→</span>
+                    </a>
+                    <a href="#" class="giveaway-button orange" id="openRegisterModal">Fill out registration form</a>
+                </div>
+                
+                <div class="terms-section">
+                    <h3>Terms & Conditions</h3>
+                    <ul>
+                        <li>18 + to enter</li>
+                        <li>To qualify your account needs to be created through our link</li>
+                        <li>Bomb-Pot reserves the right to cancel the prices if there is any suspected fraud.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>About Us</h4>
+                <p>Your trusted source for online casino reviews and bonuses.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="index.html">Top Casinos</a>
+                <a href="index.html">New Casinos</a>
+                <a href="giveaway.html">Giveaway</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Casino Reviews. All rights reserved.</p>
+        </div>
+    </footer>
+    <!-- Registration Modal -->
+    <div class="register-modal" id="registerModal">
+        <div class="modal-content">
+            <span class="close-button" id="closeModal">&times;</span>
+            <h2>Register</h2>
+            <div class="promo-button">
+                improtant text#placeholder
+            </div>
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="name">Your name<span class="required">*</span></label>
+                    <input type="text" id="name" placeholder="Your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email (for your account)<span class="required">*</span></label>
+                    <input type="email" id="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username / User ID<span class="required">*</span></label>
+                    <input type="text" id="username" placeholder="Username / User ID" required>
+                </div>
+                <button type="submit" class="submit-button">Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        const modal = document.getElementById('registerModal');
+        const openButton = document.getElementById('openRegisterModal');
+        const closeButton = document.getElementById('closeModal');
+
+        openButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            modal.style.display = 'flex';
+        });
+
+        closeButton.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Form submission
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Handle form submission here
+            modal.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
