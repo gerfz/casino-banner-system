@@ -97,6 +97,21 @@
             background-color: #333;
             border-radius: 5px;
         }
+        .color-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+        .banner-color-preview {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
         .file-upload {
             position: relative;
             overflow: hidden;
@@ -135,6 +150,28 @@
             width: auto;
             margin: 0;
         }
+        .color-picker-container {
+            margin: 1rem 0;
+        }
+        .color-presets {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .color-preset {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .color-preset:hover {
+            border-color: #fff;
+        }
+        .color-preset.gold { background-color: #FFD700; }
+        .color-preset.silver { background-color: #C0C0C0; }
+        .color-preset.bronze { background-color: #CD7F32; }
+        .color-preset.black { background-color: #1a1a1a; }
     </style>
 </head>
 <body>
@@ -157,6 +194,16 @@
                     </div>
                     <input type="text" id="bonus_amount" placeholder="Header Text (e.g. 300% up to €1500)" required>
                     <input type="text" id="bonus_extra" placeholder="Subtext (e.g. +150 Free Spins)" required>
+                    <div class="color-picker-container">
+                        <label>Background Color</label>
+                        <div class="color-presets">
+                            <div class="color-preset black" data-color="#1a1a1a" title="Black"></div>
+                            <div class="color-preset gold" data-color="#FFD700" title="Gold"></div>
+                            <div class="color-preset silver" data-color="#C0C0C0" title="Silver"></div>
+                            <div class="color-preset bronze" data-color="#CD7F32" title="Bronze"></div>
+                        </div>
+                        <input type="color" id="background_color" value="#1a1a1a">
+                    </div>
                     <div class="radio-group">
                         <label>
                             <input type="radio" name="is_focused" id="is_focused_true" value="true">
@@ -225,6 +272,7 @@
                         <strong>${banner.casino_name}</strong>
                         <br>Order: ${banner.order}
                         <br>Display First: ${banner.is_focused ? 'Yes' : 'No'}
+                        <br><div class="color-box" style="background-color: ${banner.background_color}"></div> Color: ${banner.background_color}
                     </div>
                     <div>
                         <div>Header: ${banner.bonus_amount}</div>
@@ -248,7 +296,8 @@
                 bonus_amount: document.getElementById('bonus_amount').value,
                 bonus_extra: document.getElementById('bonus_extra').value,
                 is_focused: document.querySelector('input[name="is_focused"]:checked').value,
-                order: parseInt(document.getElementById('order').value)
+                order: parseInt(document.getElementById('order').value),
+                background_color: document.getElementById('background_color').value
             };
 
             try {
@@ -303,6 +352,7 @@
                 document.getElementById('bonus_extra').value = banner.bonus_extra;
                 document.querySelector(`input[name="is_focused"][value="${banner.is_focused}"]`).checked = true;
                 document.getElementById('order').value = banner.order;
+                document.getElementById('background_color').value = banner.background_color;
                 
                 const preview = document.getElementById('logo_preview');
                 preview.src = banner.logo_path;
@@ -316,7 +366,8 @@
                         bonus_amount: document.getElementById('bonus_amount').value,
                         bonus_extra: document.getElementById('bonus_extra').value,
                         is_focused: document.querySelector('input[name="is_focused"]:checked').value,
-                        order: parseInt(document.getElementById('order').value)
+                        order: parseInt(document.getElementById('order').value),
+                        background_color: document.getElementById('background_color').value
                     };
 
                     try {
@@ -343,6 +394,14 @@
                 };
             }
         }
+
+        // Add color preset functionality
+        document.querySelectorAll('.color-preset').forEach(preset => {
+            preset.addEventListener('click', () => {
+                const color = preset.dataset.color;
+                document.getElementById('background_color').value = color;
+            });
+        });
 
         function showAlert(message, success = false) {
             const alert = document.getElementById('alert');

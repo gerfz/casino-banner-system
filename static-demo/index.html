@@ -7,6 +7,25 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #494949;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+        }
+        .featured-casino {
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+            transition: box-shadow 0.3s ease;
+        }
+        .featured-casino:hover {
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+        }
+        .swiper-slide-active .featured-casino {
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+        }
+    </style>
 </head>
 <body>
     <header class="site-header">
@@ -115,7 +134,7 @@
                 
                 banners.sort((a, b) => a.order - b.order);
                 container.innerHTML = banners.map(banner => `
-                    <div class="swiper-slide featured-casino">
+                    <div class="swiper-slide featured-casino" style="background-color: ${banner.background_color}">
                         <div class="featured-content">
                             <div class="featured-logo">
                                 <img src="${banner.logo_path}" alt="${banner.casino_name}">

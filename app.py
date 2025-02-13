@@ -29,7 +29,7 @@ logging.getLogger().addHandler(console_handler)
 
 logging.info("Application starting...")
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static-demo', static_url_path='/static-demo')
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # Change this to a secure secret key
 
 # Use absolute path for database on PythonAnywhere
@@ -66,6 +66,7 @@ class Banner(db.Model):
     bonus_extra = db.Column(db.String(100), nullable=False)
     is_focused = db.Column(db.Boolean, default=False)
     order = db.Column(db.Integer, nullable=False)
+    background_color = db.Column(db.String(50), nullable=False, default='#1a1a1a')
 
 # Create database tables
 with app.app_context():
@@ -157,7 +158,8 @@ def get_banners():
         'bonus_amount': b.bonus_amount,
         'bonus_extra': b.bonus_extra,
         'is_focused': b.is_focused,
-        'order': b.order
+        'order': b.order,
+        'background_color': b.background_color
     } for b in banners])
 
 @app.route('/api/banners', methods=['POST'])
@@ -173,11 +175,11 @@ def add_banner():
         bonus_amount=data['bonus_amount'],
         bonus_extra=data['bonus_extra'],
         is_focused=data['is_focused'] == 'true',
-        order=data['order']
+        order=data['order'],
+        background_color=data.get('background_color', '#1a1a1a')
     )
     
     if banner.is_focused:
-        # Set all other banners to not focused
         Banner.query.update({Banner.is_focused: False})
     
     db.session.add(banner)
@@ -191,7 +193,6 @@ def update_banner(id):
     banner = Banner.query.get_or_404(id)
     data = request.json
     
-    # If this banner will be focused, unfocus all others first
     if data['is_focused'] == 'true' and not banner.is_focused:
         Banner.query.update({Banner.is_focused: False})
     
@@ -201,6 +202,7 @@ def update_banner(id):
     banner.bonus_extra = data['bonus_extra']
     banner.is_focused = data['is_focused'] == 'true'
     banner.order = data['order']
+    banner.background_color = data.get('background_color', '#1a1a1a')
     
     db.session.commit()
     logging.info('Banner updated successfully')

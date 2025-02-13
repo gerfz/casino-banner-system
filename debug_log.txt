@@ -1,0 +1,15 @@
+
+Login attempt at 2025-02-13 21:45:44.528996
+Username: admin
+Password: 111
+User found in database
+Stored hash: sha256$EyC6eHwID4I0IAtn$45362af4c3881d4686cafde9ab45340e4d413caf05500d78d103475c10739c93
+Password check result: False
+
+Login attempt at 2025-02-13 21:45:49.125473
+Username: admin
+Password: 123
+User found in database
+Stored hash: sha256$EyC6eHwID4I0IAtn$45362af4c3881d4686cafde9ab45340e4d413caf05500d78d103475c10739c93
+Password check result: True
+Login successful!
