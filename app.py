@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 import os
 import logging
 import sys
+from datetime import datetime
 
 # Ensure log directory exists
 log_dir = os.path.join(os.path.expanduser('~'), 'casino-banner-system', 'logs')
@@ -97,24 +98,33 @@ def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        logging.info(f"Login attempt - Username: {username}, Password: {password}")
+        
+        # Write debug info to a file
+        with open('debug_log.txt', 'a') as f:
+            f.write(f"\nLogin attempt at {datetime.now()}\n")
+            f.write(f"Username: {username}\n")
+            f.write(f"Password: {password}\n")
         
         user = User.query.filter_by(username=username).first()
-        logging.info(f"User found: {user is not None}")
         
         if user:
-            logging.info(f"Stored password hash: {user.password_hash}")
-            result = user.check_password(password)
-            logging.info(f"Password check result: {result}")
+            with open('debug_log.txt', 'a') as f:
+                f.write(f"User found in database\n")
+                f.write(f"Stored hash: {user.password_hash}\n")
             
-            if result:
+            is_valid = user.check_password(password)
+            
+            with open('debug_log.txt', 'a') as f:
+                f.write(f"Password check result: {is_valid}\n")
+            
+            if is_valid:
                 login_user(user)
-                logging.info("User logged in successfully!")
+                with open('debug_log.txt', 'a') as f:
+                    f.write("Login successful!\n")
                 return redirect(url_for('admin_panel'))
-            else:
-                logging.info("Password check failed")
         else:
-            logging.info("User not found")
+            with open('debug_log.txt', 'a') as f:
+                f.write("User not found in database\n")
         
         flash('Invalid username or password')
     return render_template('admin_login.html')
