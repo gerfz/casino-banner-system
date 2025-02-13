@@ -44,8 +44,8 @@ python app.py
 - Admin panel: http://localhost:5000/admin
 
 ## Admin Login Credentials
-- Username: admin
-- Password: 123
+- Username: ##
+- Password: ###
 
 ## Usage
 
