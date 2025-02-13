@@ -43,19 +43,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'admin_login'
 
-# Create database tables
-with app.app_context():
-    db.create_all()
-    # Create admin user if it doesn't exist
-    User.query.delete()  # Clear existing users
-    db.session.commit()
-    
-    # Create new admin user
-    admin = User(username='admin')
-    admin.password_hash = generate_password_hash('123', method='sha256')
-    db.session.add(admin)
-    db.session.commit()
-
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -72,6 +59,19 @@ class Banner(db.Model):
     bonus_extra = db.Column(db.String(100), nullable=False)
     is_focused = db.Column(db.Boolean, default=False)
     order = db.Column(db.Integer, nullable=False)
+
+# Create database tables
+with app.app_context():
+    db.create_all()
+    # Create admin user if it doesn't exist
+    User.query.delete()  # Clear existing users
+    db.session.commit()
+    
+    # Create new admin user
+    admin = User(username='admin')
+    admin.password_hash = generate_password_hash('123', method='sha256')
+    db.session.add(admin)
+    db.session.commit()
 
 @login_manager.user_loader
 def load_user(user_id):
