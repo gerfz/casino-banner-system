@@ -7,17 +7,26 @@ import os
 import logging
 import sys
 
+# Ensure log directory exists
+log_dir = os.path.join(os.path.expanduser('~'), 'casino-banner-system', 'logs')
+os.makedirs(log_dir, exist_ok=True)
+log_file = os.path.join(log_dir, 'app.log')
+
 # Set up logging
 logging.basicConfig(
-    filename='error.log',
+    filename=log_file,
     level=logging.DEBUG,
     format='%(asctime)s %(levelname)s: %(message)s'
 )
 
-# Also log to console
+# Also print to console
 console_handler = logging.StreamHandler(sys.stdout)
 console_handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
+console_handler.setFormatter(formatter)
 logging.getLogger().addHandler(console_handler)
+
+logging.info("Application starting...")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # Change this to a secure secret key
