@@ -4,6 +4,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
+import logging
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # Change this to a secure secret key
@@ -19,6 +20,14 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'admin_login'
 
+# Set up logging to file
+log_file = os.path.join(os.path.expanduser('~'), 'casino-banner-system', 'debug.log')
+logging.basicConfig(
+    filename=log_file,
+    level=logging.DEBUG,
+    format='%(asctime)s %(levelname)s: %(message)s'
+)
+
 # Create database tables
 with app.app_context():
     db.create_all()
@@ -29,7 +38,7 @@ with app.app_context():
         admin.password_hash = generate_password_hash('123')
         db.session.add(admin)
         db.session.commit()
-        print("Admin user created successfully!")
+        logging.info("Admin user created successfully!")
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -40,9 +49,9 @@ class User(UserMixin, db.Model):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
-        print(f"Checking password: stored hash = {self.password_hash}")
+        logging.info(f"Checking password: stored hash = {self.password_hash}")
         result = check_password_hash(self.password_hash, password)
-        print(f"Password check result: {result}")
+        logging.info(f"Password check result: {result}")
         return result
 
 class Banner(db.Model):
@@ -78,22 +87,22 @@ def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        print(f"Login attempt - Username: {username}, Password: {password}")
+        logging.info(f"Login attempt - Username: {username}, Password: {password}")
         
         user = User.query.filter_by(username=username).first()
-        print(f"User found: {user is not None}")
+        logging.info(f"User found: {user is not None}")
         
         if user:
-            print(f"User password hash: {user.password_hash}")
+            logging.info(f"User password hash: {user.password_hash}")
             is_valid = user.check_password(password)
-            print(f"Password valid: {is_valid}")
+            logging.info(f"Password valid: {is_valid}")
             
             if is_valid:
                 login_user(user)
-                print("User logged in successfully")
+                logging.info("User logged in successfully")
                 return redirect(url_for('admin_panel'))
         
-        print("Login failed")
+        logging.info("Login failed")
         flash('Invalid username or password')
     
     return render_template('admin_login.html')
