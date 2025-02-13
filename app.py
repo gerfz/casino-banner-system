@@ -5,6 +5,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 import os
 import logging
+import sys
+
+# Set up logging
+logging.basicConfig(
+    filename='error.log',
+    level=logging.DEBUG,
+    format='%(asctime)s %(levelname)s: %(message)s'
+)
+
+# Also log to console
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setLevel(logging.DEBUG)
+logging.getLogger().addHandler(console_handler)
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # Change this to a secure secret key
@@ -19,14 +32,6 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'admin_login'
-
-# Set up logging to file
-log_file = os.path.join(os.path.expanduser('~'), 'casino-banner-system', 'debug.log')
-logging.basicConfig(
-    filename=log_file,
-    level=logging.DEBUG,
-    format='%(asctime)s %(levelname)s: %(message)s'
-)
 
 # Create database tables
 with app.app_context():
@@ -60,7 +65,7 @@ class Banner(db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    print(f"Loading user with ID: {user_id}")
+    logging.info(f"Loading user with ID: {user_id}")
     return User.query.get(int(user_id))
 
 def allowed_file(filename):
@@ -83,24 +88,24 @@ def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        print(f"Login attempt - Username: {username}, Password: {password}")
+        logging.info(f"Login attempt - Username: {username}, Password: {password}")
         
         user = User.query.filter_by(username=username).first()
-        print(f"User found: {user is not None}")
+        logging.info(f"User found: {user is not None}")
         
         if user:
-            print(f"Stored password hash: {user.password_hash}")
+            logging.info(f"Stored password hash: {user.password_hash}")
             result = user.check_password(password)
-            print(f"Password check result: {result}")
+            logging.info(f"Password check result: {result}")
             
             if result:
                 login_user(user)
-                print("User logged in successfully!")
+                logging.info("User logged in successfully!")
                 return redirect(url_for('admin_panel'))
             else:
-                print("Password check failed")
+                logging.info("Password check failed")
         else:
-            print("User not found")
+            logging.info("User not found")
         
         flash('Invalid username or password')
     return render_template('admin_login.html')
@@ -146,6 +151,7 @@ def add_banner():
     
     db.session.add(banner)
     db.session.commit()
+    logging.info('Banner added successfully')
     return jsonify({'message': 'Banner added successfully'})
 
 @app.route('/api/banners/<int:id>', methods=['PUT'])
@@ -166,6 +172,7 @@ def update_banner(id):
     banner.order = data['order']
     
     db.session.commit()
+    logging.info('Banner updated successfully')
     return jsonify({'message': 'Banner updated successfully'})
 
 @app.route('/api/banners/<int:id>', methods=['DELETE'])
@@ -174,6 +181,7 @@ def delete_banner(id):
     banner = Banner.query.get_or_404(id)
     db.session.delete(banner)
     db.session.commit()
+    logging.info('Banner deleted successfully')
     return jsonify({'message': 'Banner deleted successfully'})
 
 @app.route('/api/upload', methods=['POST'])
@@ -190,6 +198,7 @@ def upload_file():
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
+        logging.info('File uploaded successfully')
         return jsonify({
             'message': 'File uploaded successfully',
             'path': f'pictures/{filename}'
