@@ -94,7 +94,8 @@ def index():
 
 @app.route('/giveaway')
 def giveaway():
-    return render_template('giveaway.html')
+    logging.info("Serving giveaway.html from static-demo")
+    return send_from_directory('static-demo', 'giveaway.html')
 
 @app.route('/pictures/<path:filename>')
 def serve_pictures(filename):
