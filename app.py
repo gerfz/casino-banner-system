@@ -35,7 +35,7 @@ with app.app_context():
     admin = User.query.filter_by(username='admin').first()
     if not admin:
         admin = User(username='admin')
-        admin.password_hash = generate_password_hash('123')
+        admin.set_password('123')  # Using set_password method
         db.session.add(admin)
         db.session.commit()
         logging.info("Admin user created successfully!")
@@ -46,13 +46,10 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(120), nullable=False)
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password_hash = generate_password_hash(password, method='sha256')
 
     def check_password(self, password):
-        logging.info(f"Checking password: stored hash = {self.password_hash}")
-        result = check_password_hash(self.password_hash, password)
-        logging.info(f"Password check result: {result}")
-        return result
+        return check_password_hash(self.password_hash, password)
 
 class Banner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
