@@ -32,21 +32,19 @@ logging.basicConfig(
 with app.app_context():
     db.create_all()
     # Create admin user if it doesn't exist
-    admin = User.query.filter_by(username='admin').first()
-    if not admin:
-        admin = User(username='admin')
-        admin.set_password('123')  # Using set_password method
-        db.session.add(admin)
-        db.session.commit()
-        logging.info("Admin user created successfully!")
+    User.query.delete()  # Clear existing users
+    db.session.commit()
+    
+    # Create new admin user
+    admin = User(username='admin')
+    admin.password_hash = generate_password_hash('123', method='sha256')
+    db.session.add(admin)
+    db.session.commit()
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(120), nullable=False)
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password, method='sha256')
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -84,24 +82,13 @@ def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        logging.info(f"Login attempt - Username: {username}, Password: {password}")
         
         user = User.query.filter_by(username=username).first()
-        logging.info(f"User found: {user is not None}")
+        if user and user.check_password(password):
+            login_user(user)
+            return redirect(url_for('admin_panel'))
         
-        if user:
-            logging.info(f"User password hash: {user.password_hash}")
-            is_valid = user.check_password(password)
-            logging.info(f"Password valid: {is_valid}")
-            
-            if is_valid:
-                login_user(user)
-                logging.info("User logged in successfully")
-                return redirect(url_for('admin_panel'))
-        
-        logging.info("Login failed")
         flash('Invalid username or password')
-    
     return render_template('admin_login.html')
 
 @app.route('/admin')
