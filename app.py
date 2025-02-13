@@ -31,7 +31,14 @@ logging.info("Application starting...")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # Change this to a secure secret key
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///casino.db'
+
+# Use absolute path for database on PythonAnywhere
+if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+    db_path = os.path.join(os.path.expanduser('~'), 'casino-banner-system', 'casino.db')
+else:
+    db_path = 'casino.db'  # Local development
+
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['UPLOAD_FOLDER'] = os.path.join('static-demo', 'pictures')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
@@ -223,6 +230,10 @@ def upload_file():
             'path': f'pictures/{filename}'
         })
     return jsonify({'error': 'File type not allowed'}), 400
+
+@app.route('/giveaway')
+def giveaway():
+    return send_from_directory('static-demo', 'giveaway.html')
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0')
