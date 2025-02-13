@@ -27,6 +27,12 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     password_hash = db.Column(db.String(120), nullable=False)
 
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
 class Banner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     casino_name = db.Column(db.String(100), nullable=False)
@@ -62,7 +68,7 @@ def admin_login():
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
         
-        if user and check_password_hash(user.password_hash, password):
+        if user and user.check_password(password):
             login_user(user)
             return redirect(url_for('admin_panel'))
         flash('Invalid username or password')
@@ -162,15 +168,16 @@ def upload_file():
 def init_db():
     with app.app_context():
         db.create_all()
-        # Create admin user if it doesn't exist
-        if not User.query.filter_by(username='admin').first():
-            admin = User(
-                username='admin',
-                password_hash=generate_password_hash('123')
-            )
+        # Check if admin user exists
+        admin = User.query.filter_by(username='admin').first()
+        if not admin:
+            admin = User(username='admin')
+            admin.set_password('123')
             db.session.add(admin)
             db.session.commit()
 
+# Initialize database
+init_db()
+
 if __name__ == '__main__':
-    init_db()
-    app.run(debug=True)
+    app.run(debug=False, host='0.0.0.0')
