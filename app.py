@@ -60,6 +60,7 @@ class Banner(db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
+    print(f"Loading user with ID: {user_id}")
     return User.query.get(int(user_id))
 
 def allowed_file(filename):
@@ -82,11 +83,24 @@ def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+        print(f"Login attempt - Username: {username}, Password: {password}")
         
         user = User.query.filter_by(username=username).first()
-        if user and user.check_password(password):
-            login_user(user)
-            return redirect(url_for('admin_panel'))
+        print(f"User found: {user is not None}")
+        
+        if user:
+            print(f"Stored password hash: {user.password_hash}")
+            result = user.check_password(password)
+            print(f"Password check result: {result}")
+            
+            if result:
+                login_user(user)
+                print("User logged in successfully!")
+                return redirect(url_for('admin_panel'))
+            else:
+                print("Password check failed")
+        else:
+            print("User not found")
         
         flash('Invalid username or password')
     return render_template('admin_login.html')
