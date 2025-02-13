@@ -66,12 +66,19 @@ def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+        print(f"Login attempt - Username: {username}")  # Debug print
+        
         user = User.query.filter_by(username=username).first()
+        print(f"User found: {user is not None}")  # Debug print
         
         if user and user.check_password(password):
+            print("Password check passed")  # Debug print
             login_user(user)
             return redirect(url_for('admin_panel'))
+        
+        print("Login failed")  # Debug print
         flash('Invalid username or password')
+    
     return render_template('admin_login.html')
 
 @app.route('/admin')
