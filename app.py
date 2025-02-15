@@ -66,7 +66,20 @@ class Banner(db.Model):
     bonus_extra = db.Column(db.String(100), nullable=False)
     is_focused = db.Column(db.Boolean, default=False)
     order = db.Column(db.Integer, nullable=False)
-    background_color = db.Column(db.String(50), nullable=False, default='#1a1a1a')
+    background_color = db.Column(db.String(500), nullable=False, default='#1a1a1a')  # Increased max length to 500
+    redirect_url = db.Column(db.String(500), nullable=False, default='#')
+
+class TopRatedCasino(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    casino_name = db.Column(db.String(100), nullable=False)
+    logo_path = db.Column(db.String(200), nullable=False)
+    rating = db.Column(db.Float, nullable=False)  # Changed to Float for decimal ratings
+    deposit_bonus = db.Column(db.String(100), nullable=False)
+    free_spins = db.Column(db.String(100))  # Made nullable
+    features = db.Column(db.Text, nullable=False)
+    order = db.Column(db.Integer, nullable=False)
+    redirect_url = db.Column(db.String(500), nullable=False)
+    is_exclusive = db.Column(db.Boolean, default=False)
 
 # Create database tables
 with app.app_context():
@@ -159,33 +172,55 @@ def get_banners():
         'bonus_extra': b.bonus_extra,
         'is_focused': b.is_focused,
         'order': b.order,
-        'background_color': b.background_color
+        'background_color': b.background_color,
+        'redirect_url': b.redirect_url
     } for b in banners])
 
 @app.route('/api/banners', methods=['POST'])
 @login_required
 def add_banner():
-    if Banner.query.count() >= 3:
-        return jsonify({'error': 'Maximum 3 banners allowed'}), 400
-    
-    data = request.json
-    banner = Banner(
-        casino_name=data['casino_name'],
-        logo_path=data['logo_path'],
-        bonus_amount=data['bonus_amount'],
-        bonus_extra=data['bonus_extra'],
-        is_focused=data['is_focused'] == 'true',
-        order=data['order'],
-        background_color=data.get('background_color', '#1a1a1a')
-    )
-    
-    if banner.is_focused:
-        Banner.query.update({Banner.is_focused: False})
-    
-    db.session.add(banner)
-    db.session.commit()
-    logging.info('Banner added successfully')
-    return jsonify({'message': 'Banner added successfully'})
+    try:
+        if Banner.query.count() >= 3:
+            return jsonify({'error': 'Maximum 3 banners allowed'}), 400
+
+        data = request.json
+        logging.info(f"Received banner data: {data}")
+
+        # Validate required fields
+        required_fields = ['casino_name', 'logo_path', 'bonus_amount', 'bonus_extra', 'redirect_url', 'background_color']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'error': f'Missing required field: {field}'}), 400
+
+        # Determine order based on color
+        color = data['background_color']
+        if '#C0C0C0' in color:  # Silver
+            order = 1
+        elif '#FFD700' in color:  # Gold
+            order = 2
+        else:  # Bronze
+            order = 3
+
+        # Create new banner
+        banner = Banner(
+            casino_name=data['casino_name'],
+            logo_path=data['logo_path'],
+            bonus_amount=data['bonus_amount'],
+            bonus_extra=data['bonus_extra'],
+            redirect_url=data['redirect_url'],
+            background_color=data['background_color'],
+            order=order  # Set order based on color
+        )
+
+        db.session.add(banner)
+        db.session.commit()
+        logging.info(f"Banner added successfully: {banner.casino_name}")
+        return jsonify({'message': 'Banner added successfully'})
+
+    except Exception as e:
+        logging.error(f"Error adding banner: {str(e)}")
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
 
 @app.route('/api/banners/<int:id>', methods=['PUT'])
 @login_required
@@ -203,6 +238,7 @@ def update_banner(id):
     banner.is_focused = data['is_focused'] == 'true'
     banner.order = data['order']
     banner.background_color = data.get('background_color', '#1a1a1a')
+    banner.redirect_url = data.get('redirect_url', '#')
     
     db.session.commit()
     logging.info('Banner updated successfully')
@@ -216,6 +252,166 @@ def delete_banner(id):
     db.session.commit()
     logging.info('Banner deleted successfully')
     return jsonify({'message': 'Banner deleted successfully'})
+
+@app.route('/api/top-rated-casinos', methods=['GET'])
+def get_top_rated_casinos():
+    try:
+        casinos = TopRatedCasino.query.order_by(TopRatedCasino.order).all()
+        logging.info(f"Found {len(casinos)} casinos")
+        
+        casino_list = []
+        for casino in casinos:
+            casino_data = {
+                'id': casino.id,
+                'casino_name': casino.casino_name,
+                'logo_path': casino.logo_path,
+                'rating': casino.rating,
+                'deposit_bonus': casino.deposit_bonus,
+                'free_spins': casino.free_spins,
+                'features': casino.features.split(','),
+                'order': casino.order,
+                'is_exclusive': casino.is_exclusive,
+                'redirect_url': casino.redirect_url
+            }
+            logging.info(f"Casino data: {casino_data}")
+            casino_list.append(casino_data)
+            
+        return jsonify(casino_list)
+    except Exception as e:
+        logging.error(f"Error getting casinos: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/top-rated-casinos', methods=['POST'])
+@login_required
+def add_top_rated_casino():
+    try:
+        if not request.is_json:
+            return jsonify({'error': 'Content-Type must be application/json'}), 400
+            
+        data = request.json
+        if data is None:
+            return jsonify({'error': 'Invalid JSON data'}), 400
+
+        # Validate required fields
+        required_fields = ['casino_name', 'logo_path', 'rating', 'deposit_bonus', 'features', 'redirect_url']
+        missing_fields = [field for field in required_fields if not data.get(field)]
+        if missing_fields:
+            return jsonify({'error': f"Missing required fields: {', '.join(missing_fields)}"}), 400
+
+        try:
+            rating = float(data['rating'])
+            # Validate rating range
+            if not (0.5 <= rating <= 5.0):
+                return jsonify({'error': 'Rating must be between 0.5 and 5.0'}), 400
+            # Round to nearest 0.5
+            rating = round(rating * 2) / 2
+        except (ValueError, TypeError):
+            return jsonify({'error': 'Invalid rating value'}), 400
+
+        # Get the highest order number and add 1
+        highest_order = db.session.query(db.func.max(TopRatedCasino.order)).scalar() or 0
+
+        # Create casino object
+        casino = TopRatedCasino(
+            casino_name=data['casino_name'],
+            logo_path=data['logo_path'],
+            rating=rating,  # Use the validated and rounded rating
+            deposit_bonus=data['deposit_bonus'],
+            free_spins=data.get('free_spins', ''),
+            features=','.join(data['features']) if isinstance(data['features'], list) else data['features'],
+            order=highest_order + 1,
+            redirect_url=data['redirect_url'],
+            is_exclusive=data.get('is_exclusive', False)
+        )
+
+        db.session.add(casino)
+        db.session.commit()
+
+        return jsonify({'message': 'Casino added successfully', 'id': casino.id})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/top-rated-casinos/<int:id>', methods=['PUT'])
+@login_required
+def update_top_rated_casino(id):
+    try:
+        casino = TopRatedCasino.query.get_or_404(id)
+        data = request.json
+        casino.casino_name = data['casino_name']
+        casino.logo_path = data['logo_path']
+        try:
+            rating = float(data['rating'])
+            # Validate rating range
+            if not (0.5 <= rating <= 5.0):
+                return jsonify({'error': 'Rating must be between 0.5 and 5.0'}), 400
+            # Round to nearest 0.5
+            rating = round(rating * 2) / 2
+        except (ValueError, TypeError):
+            return jsonify({'error': 'Invalid rating value'}), 400
+        casino.rating = rating
+        casino.deposit_bonus = data['deposit_bonus']
+        casino.free_spins = data.get('free_spins', '')
+        casino.features = ','.join(data['features'])
+        casino.is_exclusive = data.get('is_exclusive', False)
+        casino.redirect_url = data.get('redirect_url', '#')
+        db.session.commit()
+        return jsonify({'message': 'Casino updated successfully'})
+    except Exception as e:
+        logging.error(f"Error updating top rated casino: {str(e)}")
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/top-rated-casinos/<int:id>', methods=['DELETE'])
+@login_required
+def delete_top_rated_casino(id):
+    try:
+        casino = TopRatedCasino.query.get_or_404(id)
+        db.session.delete(casino)
+        db.session.commit()
+        return jsonify({'message': 'Casino deleted successfully'})
+    except Exception as e:
+        logging.error(f"Error deleting top rated casino: {str(e)}")
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/top-rated-casinos/reorder', methods=['POST'])
+@login_required
+def reorder_casinos():
+    try:
+        data = request.json
+        logging.info(f"Reordering casinos with data: {data}")
+        
+        dragged_id = data['draggedId']
+        drop_id = data['dropId']
+        dragged_order = data['draggedOrder']
+        drop_order = data['dropOrder']
+        
+        # Get all casinos
+        casinos = TopRatedCasino.query.all()
+        
+        # Update orders
+        if dragged_order < drop_order:
+            # Moving down - update orders between dragged and drop positions
+            for casino in casinos:
+                if casino.id == dragged_id:
+                    casino.order = drop_order
+                elif dragged_order < casino.order <= drop_order:
+                    casino.order -= 1
+        else:
+            # Moving up - update orders between drop and dragged positions
+            for casino in casinos:
+                if casino.id == dragged_id:
+                    casino.order = drop_order
+                elif drop_order <= casino.order < dragged_order:
+                    casino.order += 1
+        
+        db.session.commit()
+        logging.info("Casino order updated successfully")
+        return jsonify({'message': 'Order updated successfully'})
+        
+    except Exception as e:
+        logging.error(f"Error reordering casinos: {str(e)}")
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
 
 @app.route('/api/upload', methods=['POST'])
 @login_required
@@ -231,12 +427,12 @@ def upload_file():
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
-        logging.info('File uploaded successfully')
+        logging.info(f'File uploaded successfully to {file_path}')
         return jsonify({
             'message': 'File uploaded successfully',
-            'path': f'pictures/{filename}'
+            'path': f'pictures/{filename}'  # This path is relative to static-demo
         })
     return jsonify({'error': 'File type not allowed'}), 400
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0')

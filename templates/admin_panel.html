@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Banner Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -13,408 +14,1243 @@
             padding: 20px;
             color: white;
         }
-        .container {
+        .admin-panel {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
-        h1 {
-            color: #ff2d55;
-            margin-bottom: 2rem;
+        .management-section {
+            background: #1E1E1E;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-        .banner-list {
-            display: grid;
-            gap: 1rem;
-            margin-bottom: 2rem;
+        h1, h2 {
+            color: #ff4757;
+            margin-bottom: 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .banner-item {
-            background-color: #252525;
-            padding: 1rem;
-            border-radius: 10px;
-            display: grid;
-            grid-template-columns: 100px 1fr 2fr auto;
-            align-items: center;
-            gap: 1rem;
+        h3 {
+            color: #4361ee;
+            margin-bottom: 15px;
+            font-weight: 600;
         }
-        .banner-form {
-            background-color: #252525;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
+        .add-form {
+            background: #2A2A2A;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
+            grid-template-columns: auto 1fr 1fr;
+            gap: 30px;
+            align-items: start;
         }
-        input, select {
-            padding: 0.8rem;
-            border: none;
-            border-radius: 5px;
-            background-color: #333;
-            color: white;
-            font-size: 1rem;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        button {
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 5px;
-            background-color: #ff2d55;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #ff1a45;
-        }
-        button.delete {
-            background-color: #dc3545;
-        }
-        button.delete:hover {
-            background-color: #c82333;
-        }
-        .banner-controls {
-            display: flex;
-            gap: 0.5rem;
-        }
-        .alert {
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 1rem;
-            background-color: #dc3545;
-            display: none;
-        }
-        .success {
-            background-color: #28a745;
+        .logo-section {
+            width: 180px;
         }
         .logo-preview {
-            width: 100px;
-            height: 50px;
-            object-fit: contain;
-            background-color: #333;
-            border-radius: 5px;
-        }
-        .color-box {
-            width: 20px;
-            height: 20px;
-            border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 5px;
-        }
-        .banner-color-preview {
-            display: inline-flex;
+            width: 180px;
+            height: 180px;
+            border: 2px dashed #4361ee;
+            border-radius: 12px;
+            display: flex;
             align-items: center;
-            gap: 0.5rem;
-            margin-top: 0.5rem;
-        }
-        .file-upload {
-            position: relative;
+            justify-content: center;
+            margin-bottom: 15px;
             overflow: hidden;
-            margin: 10px 0;
+            background: #242424;
+            transition: all 0.3s ease;
         }
-        .file-upload input[type=file] {
-            position: absolute;
-            top: 0;
-            right: 0;
-            min-width: 100%;
-            min-height: 100%;
-            font-size: 100px;
-            text-align: right;
-            filter: alpha(opacity=0);
-            opacity: 0;
+        .logo-preview:hover {
+            border-color: #ff4757;
+        }
+        .logo-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .form-input {
+            width: 100%;
+            background: #333;
+            border: 1px solid #444;
+            color: white;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .form-input:focus {
+            border-color: #4361ee;
             outline: none;
-            background: white;
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.3);
+        }
+        .choose-file-btn {
+            width: 100%;
+            background: #4361ee;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
             cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .choose-file-btn:hover {
+            background: #3651d8;
+            transform: translateY(-1px);
+        }
+        .color-picker {
+            margin-bottom: 20px;
+        }
+        .color-picker label {
             display: block;
+            margin-bottom: 10px;
+            color: #999;
+            font-size: 14px;
+        }
+        .color-options {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .color-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+        .color-btn.active {
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
         }
         .radio-group {
             display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            padding: 0.8rem;
-            background-color: #333;
-            border-radius: 5px;
+            gap: 20px;
+            margin: 15px 0;
         }
-        .radio-group label {
+        .radio-label {
+            color: white;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 8px;
             cursor: pointer;
         }
-        .radio-group input[type="radio"] {
-            width: auto;
-            margin: 0;
+        .submit-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 25px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .color-picker-container {
-            margin: 1rem 0;
+        .submit-btn:hover {
+            background: #ff2e45;
+            transform: translateY(-2px);
         }
-        .color-presets {
+        .items-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .item-card {
+            background: #2A2A2A;
+            border-radius: 12px;
+            padding: 20px;
             display: flex;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
+            flex-direction: column;
+            gap: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        .color-preset {
-            width: 30px;
-            height: 30px;
-            border-radius: 5px;
+        .item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .item-logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #242424;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .item-logo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .item-info {
+            color: white;
+            text-align: center;
+        }
+        .item-info h4 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        .item-info p {
+            margin: 0;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .item-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        .edit-btn, .delete-btn {
+            padding: 8px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .edit-btn {
+            background: #4361ee;
+            color: white;
+        }
+        .edit-btn:hover {
+            background: #3651d8;
+        }
+        .delete-btn {
+            background: #ff4757;
+            color: white;
+        }
+        .delete-btn:hover {
+            background: #ff2e45;
+        }
+        .star-rating {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        .star {
+            color: #ffd700;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .star:hover {
+            transform: scale(1.2);
+        }
+        .star.active {
+            filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.7));
+        }
+        .checkbox-label {
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        textarea.form-input {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+            z-index: 1000;
+        }
+        .alert.success {
+            background: #4CAF50;
+        }
+        .alert.error {
+            background: #ff4757;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .exclusive-badge {
+            background: #ffd700;
+            color: #1a1a1a;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        .redirect-url {
+            font-size: 12px;
+            color: #666;
+            word-break: break-all;
+            margin-top: 8px;
+        }
+        .form-group label {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .features-input {
+            min-height: 120px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 24px;
+            height: 24px;
+            margin: -12px 0 0 -12px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        /* Casino card styles */
+        .casino-card {
+            background: #2c2c2c;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .casino-content {
+            text-align: center;
+        }
+
+        .casino-logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .casino-logo img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .casino-title {
+            color: white;
+            margin: 0 0 10px;
+            font-size: 1.2em;
+        }
+
+        .casino-rating {
+            margin: 8px 0;
+            text-align: center;
+        }
+
+        .stars {
+            display: inline-flex;
+            gap: 1px;
+        }
+
+        .stars i {
+            color: #FFD700;
+            font-size: 16px;
+            text-shadow: 0 0 1px rgba(0,0,0,0.2);
+        }
+
+        .stars i.far {
+            color: #666;
+        }
+
+        .bonus-info {
+            margin: 10px 0;
+            color: #4a90e2;
+            font-size: 0.9em;
+        }
+
+        .bonus-info > div {
+            margin: 5px 0;
+        }
+
+        .features {
+            margin: 15px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .feature {
+            background: #3a3a3a;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            color: #ddd;
+        }
+
+        .casino-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 6px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s;
+        }
+        .stars {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        .stars i {
+            color: #ffd700;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .stars i:hover {
+            transform: scale(1.2);
+        }
+        .stars i.active {
+            filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.7));
+        }
+        .add-casino-section {
+            background: #2c2c2c;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .add-casino-section h3 {
+            color: #4a90e2;
+            margin: 0 0 20px 0;
+            font-size: 1.2em;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .logo-upload {
+            background: #1a1a1a;
+            border: 2px dashed #444;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .logo-preview {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 15px;
+            background: #242424;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .logo-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .form-fields {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea {
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 10px;
+            color: #fff;
+            font-size: 0.95em;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group textarea:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+
+        .example-features {
+            margin-top: 8px;
+            color: #666;
+            font-size: 0.85em;
+            font-style: italic;
+        }
+
+        .exclusive-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .exclusive-checkbox input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+
+        .exclusive-checkbox label {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        .add-casino-btn {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 24px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 20px;
+        }
+
+        .add-casino-btn:hover {
+            background: #357abd;
+        }
+        /* Color picker styles */
+        .color-options {
+            display: flex;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .color-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
             cursor: pointer;
             border: 2px solid transparent;
+            transition: all 0.2s ease;
         }
-        .color-preset:hover {
+
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .color-btn.active {
             border-color: #fff;
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
-        .color-preset.gold { background-color: #FFD700; }
-        .color-preset.silver { background-color: #C0C0C0; }
-        .color-preset.bronze { background-color: #CD7F32; }
-        .color-preset.black { background-color: #1a1a1a; }
+
+        .color-btn.gold {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+
+        .color-btn.silver {
+            background: linear-gradient(135deg, #C0C0C0, #A9A9A9);
+        }
+
+        .color-btn.bronze {
+            background: linear-gradient(135deg, #CD7F32, #8B4513);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Banner Management</h1>
-        <div id="alert" class="alert"></div>
-        
-        <div class="banner-form">
-            <h2>Add New Banner</h2>
-            <form id="addBannerForm">
-                <div class="form-grid">
-                    <input type="text" id="casino_name" placeholder="Casino Name" required>
-                    <div>
-                        <div class="file-upload">
-                            <button type="button" style="width: 100%">Choose Logo File</button>
-                            <input type="file" id="logo_file" accept=".png,.jpg,.jpeg,.gif" onchange="handleFileSelect(this)">
-                        </div>
-                        <input type="hidden" id="logo_path" required>
-                        <img id="logo_preview" class="logo-preview" style="display: none;">
-                    </div>
-                    <input type="text" id="bonus_amount" placeholder="Header Text (e.g. 300% up to €1500)" required>
-                    <input type="text" id="bonus_extra" placeholder="Subtext (e.g. +150 Free Spins)" required>
-                    <div class="color-picker-container">
-                        <label>Background Color</label>
-                        <div class="color-presets">
-                            <div class="color-preset black" data-color="#1a1a1a" title="Black"></div>
-                            <div class="color-preset gold" data-color="#FFD700" title="Gold"></div>
-                            <div class="color-preset silver" data-color="#C0C0C0" title="Silver"></div>
-                            <div class="color-preset bronze" data-color="#CD7F32" title="Bronze"></div>
-                        </div>
-                        <input type="color" id="background_color" value="#1a1a1a">
-                    </div>
-                    <div class="radio-group">
-                        <label>
-                            <input type="radio" name="is_focused" id="is_focused_true" value="true">
-                            Display First
-                        </label>
-                        <label>
-                            <input type="radio" name="is_focused" id="is_focused_false" value="false" checked>
-                            Regular Order
-                        </label>
-                    </div>
-                    <input type="number" id="order" placeholder="Order (1-3)" min="1" max="3" required>
-                </div>
-                <button type="submit">Add Banner</button>
-            </form>
-        </div>
+    <div class="admin-panel">
+        <h1>Admin Panel</h1>
 
-        <h2>Current Banners</h2>
-        <div id="bannerList" class="banner-list">
-            <!-- Banners will be loaded here -->
-        </div>
+        <!-- Banner Management Section -->
+        <section class="management-section">
+            <h2>Banner Management</h2>
+            
+            <div class="add-form">
+                <h3>Add New Banner</h3>
+                <div class="form-grid">
+                    <div class="form-group logo-section">
+                        <div class="logo-preview">
+                            <img id="bannerLogoPreview" src="/static-demo/images/placeholder.png" alt="Logo preview">
+                        </div>
+                        <button class="choose-file-btn" onclick="document.getElementById('bannerLogoInput').click()">
+                            Choose Logo File
+                        </button>
+                        <input type="file" id="bannerLogoInput" hidden accept="image/*">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" id="bannerCasinoName" placeholder="Casino Name" class="form-input">
+                        <input type="text" id="bannerHeader" placeholder="Header Text (e.g. 300% up to €1500)" class="form-input">
+                        <input type="text" id="bannerSubtext" placeholder="Subtext (e.g. +150 Free Spins)" class="form-input">
+                        <input type="url" id="bannerRedirectUrl" placeholder="Redirect URL (when Play Now is clicked)" class="form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="color-picker">
+                            <label>Background Color</label>
+                            <div class="color-options">
+                                <button class="color-btn" data-color="linear-gradient(135deg, #FFD700, #FFA500)" style="background: linear-gradient(135deg, #FFD700, #FFA500)" onclick="selectBannerColor(this)"></button>
+                                <button class="color-btn" data-color="linear-gradient(135deg, #C0C0C0, #A9A9A9)" style="background: linear-gradient(135deg, #C0C0C0, #A9A9A9)" onclick="selectBannerColor(this)"></button>
+                                <button class="color-btn" data-color="linear-gradient(135deg, #CD7F32, #8B4513)" style="background: linear-gradient(135deg, #CD7F32, #8B4513)" onclick="selectBannerColor(this)"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="submit-btn" onclick="addBanner()">Add Banner</button>
+            </div>
+
+            <div class="items-list" id="bannersList">
+                <!-- Banners will be listed here -->
+            </div>
+        </section>
+
+        <!-- Top Rated Casinos Section -->
+        <section class="management-section">
+            <h2>Top Rated Casinos</h2>
+            
+            <div class="add-casino-section">
+                <h3>Add New Casino</h3>
+                <div class="form-grid">
+                    <div class="logo-upload">
+                        <div class="logo-preview">
+                            <img id="casinoLogoPreview" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Crect width='50' height='50' fill='%23333'/%3E%3Ctext x='25' y='25' font-family='Arial' font-size='8' fill='%23666' text-anchor='middle' alignment-baseline='middle'%3ELogo preview%3C/text%3E%3C/svg%3E" alt="Logo preview">
+                        </div>
+                        <button class="choose-file-btn" onclick="document.getElementById('casinoLogoInput').click()">Choose Logo File</button>
+                        <input type="file" id="casinoLogoInput" style="display: none" accept="image/*" onchange="handleFileSelect(this)">
+                    </div>
+                    <div class="form-fields">
+                        <div class="form-group">
+                            <label for="casinoName">Casino Name</label>
+                            <input type="text" id="casinoName" placeholder="Enter casino name">
+                        </div>
+                        <div class="form-group">
+                            <label for="depositBonus">Deposit Bonus</label>
+                            <input type="text" id="depositBonus" placeholder="e.g. 100% up to €500">
+                        </div>
+                        <div class="form-group">
+                            <label for="freeSpins">Free Spins</label>
+                            <input type="text" id="freeSpins" placeholder="e.g. + 100 Free Spins">
+                        </div>
+                        <div class="form-group">
+                            <label for="redirectUrl">Redirect URL (when Play Now is clicked)</label>
+                            <input type="text" id="redirectUrl" placeholder="Enter redirect URL">
+                        </div>
+                        <div class="form-group">
+                            <label for="rating">Rating (0.5-5)</label>
+                            <input type="number" id="rating" min="0.5" max="5" step="0.5" value="5">
+                        </div>
+                        <div class="form-group">
+                            <label for="features">Features (one per line)</label>
+                            <textarea id="features" placeholder="Enter features, one per line"></textarea>
+                            <div class="example-features">Example: Fast withdrawals, Big welcome bonus, User-friendly Game lobby</div>
+                        </div>
+                        <div class="exclusive-checkbox">
+                            <input type="checkbox" id="isExclusive">
+                            <label for="isExclusive">Exclusive Offer</label>
+                        </div>
+                        <button class="add-casino-btn" onclick="addCasino()">ADD CASINO</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="items-list" id="casinosList">
+                <!-- Casinos will be listed here -->
+            </div>
+        </section>
     </div>
 
     <script>
-        async function handleFileSelect(fileInput) {
+        let currentRating = 5; // Default rating
+
+        // Rating functionality
+        function updateRating(value) {
+            value = parseFloat(value);
+            // Ensure value is between 0.5 and 5
+            if (value < 0.5) value = 0.5;
+            if (value > 5) value = 5;
+            // Round to nearest 0.5
+            value = Math.round(value * 2) / 2;
+            currentRating = value;
+            document.getElementById('rating').value = value;
+        }
+
+        // Reset form should also reset rating
+        function resetForm(type) {
+            if (type === 'casino') {
+                document.getElementById('casinoName').value = '';
+                document.getElementById('depositBonus').value = '';
+                document.getElementById('freeSpins').value = '';
+                document.getElementById('redirectUrl').value = '';
+                document.getElementById('features').value = '';
+                document.getElementById('isExclusive').checked = false;
+                document.getElementById('casinoLogoPreview').src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="50" height="50"%3E%3Crect width="50" height="50" fill="%23333"/%3E%3Ctext x="25" y="25" font-family="Arial" font-size="8" fill="%23666" text-anchor="middle" alignment-baseline="middle"%3ELogo preview%3C/text%3E%3C/svg%3E';
+                currentRating = 5; // Reset to default rating
+                document.getElementById('rating').value = currentRating;
+            } else {
+                document.getElementById('bannerCasinoName').value = '';
+                document.getElementById('bannerHeader').value = '';
+                document.getElementById('bannerSubtext').value = '';
+                document.getElementById('bannerRedirectUrl').value = '';
+                document.getElementById('bannerLogoPreview').src = '/static-demo/images/placeholder.png';
+                document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+            }
+        }
+
+        // Load banners with animation
+        async function loadBanners() {
+            try {
+                const response = await fetch('/api/banners');
+                const banners = await response.json();
+                
+                const bannersList = document.getElementById('bannersList');
+                bannersList.innerHTML = '';
+                
+                banners.forEach((banner, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'item-card';
+                    card.style.animation = `fadeIn 0.3s ease forwards ${index * 0.1}s`;
+                    card.style.background = banner.background_color;
+                    
+                    card.innerHTML = `
+                        <div class="item-logo">
+                            <img src="/static-demo/${banner.logo_path}" alt="${banner.casino_name} logo">
+                        </div>
+                        <div class="item-info">
+                            <h4>${banner.casino_name}</h4>
+                            <p>${banner.bonus_amount}</p>
+                            <p>${banner.bonus_extra}</p>
+                        </div>
+                        <div class="item-actions">
+                            <button class="edit-btn" onclick="editBanner(${banner.id})">Edit</button>
+                            <button class="delete-btn" onclick="deleteBanner(${banner.id})">Delete</button>
+                        </div>
+                    `;
+                    
+                    bannersList.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading banners:', error);
+                showAlert('Error loading banners');
+            }
+        }
+
+        // Load casinos with animation
+        async function loadCasinos() {
+            try {
+                const response = await fetch('/api/top-rated-casinos');
+                const casinos = await response.json();
+                
+                const casinosList = document.getElementById('casinosList');
+                casinosList.innerHTML = '';
+                
+                casinos.forEach((casino, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'casino-card';
+                    card.draggable = true;
+                    card.dataset.casinoId = casino.id;
+                    card.dataset.order = casino.order;
+                    
+                    card.innerHTML = `
+                        <div class="order-handle" title="Drag to reorder">☰</div>
+                        ${casino.is_exclusive ? '<div class="exclusive-badge">Exclusive</div>' : ''}
+                        <div class="casino-content">
+                            <div class="casino-logo">
+                                <img src="${casino.logo_path}" alt="${casino.casino_name}">
+                            </div>
+                            <h4 class="casino-title">${casino.casino_name}</h4>
+                            <div class="casino-rating">
+                                ${displayStars(casino.rating)}
+                            </div>
+                            <div class="bonus-info">
+                                <div>${casino.deposit_bonus}</div>
+                                <div>${casino.free_spins}</div>
+                            </div>
+                            <div class="features">
+                                ${Array.isArray(casino.features) 
+                                    ? casino.features.map(feature => 
+                                        `<div class="feature">${feature.trim()}</div>`
+                                    ).join('')
+                                    : casino.features.split(',').map(feature => 
+                                        `<div class="feature">${feature.trim()}</div>`
+                                    ).join('')
+                                }
+                            </div>
+                            <div class="casino-actions">
+                                <button class="edit-btn" onclick="editCasino(${casino.id})">Edit</button>
+                                <button class="delete-btn" onclick="deleteCasino(${casino.id})">Delete</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Add drag and drop event listeners
+                    card.addEventListener('dragstart', handleDragStart);
+                    card.addEventListener('dragend', handleDragEnd);
+                    card.addEventListener('dragover', handleDragOver);
+                    card.addEventListener('dragenter', handleDragEnter);
+                    card.addEventListener('dragleave', handleDragLeave);
+                    card.addEventListener('drop', handleDrop);
+                    
+                    casinosList.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading casinos:', error);
+                showAlert('Error loading casinos');
+            }
+        }
+
+        function displayStars(rating) {
+            rating = parseFloat(rating); // Ensure rating is a number
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = (rating % 1) >= 0.5;
+            const emptyStars = 5 - Math.ceil(rating);
+            
+            let html = '<div class="stars">';
+            
+            // Full stars
+            for (let i = 0; i < fullStars; i++) {
+                html += '<i class="fas fa-star"></i>';
+            }
+            
+            // Half star
+            if (hasHalfStar) {
+                html += '<i class="fas fa-star-half-alt"></i>';
+            }
+            
+            // Empty stars
+            for (let i = 0; i < emptyStars; i++) {
+                html += '<i class="far fa-star"></i>';
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        // File upload preview
+        function handleFileSelect(fileInput) {
             const file = fileInput.files[0];
             if (!file) return;
 
+            const previewId = fileInput.id === 'bannerLogoInput' ? 'bannerLogoPreview' : 'casinoLogoPreview';
+            const preview = document.getElementById(previewId);
+            
+            // Show loading state
+            preview.src = '/static-demo/images/loading.gif';
+
+            // Read file and show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+            };
+            reader.onerror = function() {
+                preview.src = '/static-demo/images/placeholder.png';
+                showAlert('Error loading preview');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Initialize file input handlers
+        document.getElementById('bannerLogoInput').addEventListener('change', function() {
+            handleFileSelect(this);
+        });
+        document.getElementById('casinoLogoInput').addEventListener('change', function() {
+            handleFileSelect(this);
+        });
+
+        // Add banner with validation
+        async function addBanner() {
             const formData = new FormData();
-            formData.append('file', file);
+            const logoInput = document.getElementById('bannerLogoInput');
+            
+            if (!logoInput.files[0]) {
+                showAlert('Please select a logo image');
+                return;
+            }
+
+            const casinoName = document.getElementById('bannerCasinoName').value;
+            const bonusAmount = document.getElementById('bannerHeader').value;
+            const bonusExtra = document.getElementById('bannerSubtext').value;
+            const redirectUrl = document.getElementById('bannerRedirectUrl').value;
+            const selectedButton = document.querySelector('.color-btn.active');
+            
+            if (!selectedButton) {
+                showAlert('Please select a background color');
+                return;
+            }
+            
+            const backgroundColor = selectedButton.dataset.color;
+
+            if (!casinoName || !bonusAmount || !bonusExtra || !redirectUrl) {
+                showAlert('Please fill in all fields');
+                return;
+            }
+
+            if (!redirectUrl.startsWith('http://') && !redirectUrl.startsWith('https://')) {
+                showAlert('Please enter a valid URL starting with http:// or https://');
+                return;
+            }
 
             try {
-                const response = await fetch('/api/upload', {
+                // First upload the logo
+                formData.append('file', logoInput.files[0]);
+                const uploadResponse = await fetch('/api/upload', {
                     method: 'POST',
                     body: formData
                 });
                 
-                const result = await response.json();
-                if (response.ok) {
-                    document.getElementById('logo_path').value = result.path;
-                    const preview = document.getElementById('logo_preview');
-                    preview.src = result.path;
-                    preview.style.display = 'block';
-                    showAlert('Logo uploaded successfully', true);
-                } else {
-                    showAlert(result.error);
+                if (!uploadResponse.ok) {
+                    const uploadError = await uploadResponse.json();
+                    throw new Error(uploadError.error || 'Failed to upload logo');
                 }
+                
+                const uploadData = await uploadResponse.json();
+                
+                // Then create the banner
+                const response = await fetch('/api/banners', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        casino_name: casinoName,
+                        logo_path: uploadData.path,
+                        bonus_amount: bonusAmount,
+                        bonus_extra: bonusExtra,
+                        redirect_url: redirectUrl,
+                        background_color: backgroundColor
+                    })
+                });
+
+                if (!response.ok) {
+                    const responseError = await response.json();
+                    throw new Error(responseError.error || 'Failed to create banner');
+                }
+
+                showAlert('Banner added successfully', 'success');
+                resetForm('banner');
+                loadBanners();
             } catch (error) {
-                showAlert('Error uploading logo');
+                console.error('Error:', error);
+                showAlert(error.message);
             }
         }
 
-        // Load banners
-        async function loadBanners() {
-            const response = await fetch('/api/banners');
-            const banners = await response.json();
-            const bannerList = document.getElementById('bannerList');
-            bannerList.innerHTML = '';
-            
-            banners.sort((a, b) => a.order - b.order);
-            banners.forEach(banner => {
-                const div = document.createElement('div');
-                div.className = 'banner-item';
-                div.innerHTML = `
-                    <img src="${banner.logo_path}" alt="${banner.casino_name}" class="logo-preview">
-                    <div>
-                        <strong>${banner.casino_name}</strong>
-                        <br>Order: ${banner.order}
-                        <br>Display First: ${banner.is_focused ? 'Yes' : 'No'}
-                        <br><div class="color-box" style="background-color: ${banner.background_color}"></div> Color: ${banner.background_color}
-                    </div>
-                    <div>
-                        <div>Header: ${banner.bonus_amount}</div>
-                        <div>Subtext: ${banner.bonus_extra}</div>
-                    </div>
-                    <div class="banner-controls">
-                        <button onclick="editBanner(${banner.id})">Edit</button>
-                        <button class="delete" onclick="deleteBanner(${banner.id})">Delete</button>
-                    </div>
-                `;
-                bannerList.appendChild(div);
-            });
-        }
-
-        // Add banner
-        document.getElementById('addBannerForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const formData = {
-                casino_name: document.getElementById('casino_name').value,
-                logo_path: document.getElementById('logo_path').value,
-                bonus_amount: document.getElementById('bonus_amount').value,
-                bonus_extra: document.getElementById('bonus_extra').value,
-                is_focused: document.querySelector('input[name="is_focused"]:checked').value,
-                order: parseInt(document.getElementById('order').value),
-                background_color: document.getElementById('background_color').value
-            };
-
+        // Add casino with validation
+        async function addCasino() {
             try {
-                const response = await fetch('/api/banners', {
+                const casinoName = document.getElementById('casinoName').value;
+                const depositBonus = document.getElementById('depositBonus').value;
+                const freeSpins = document.getElementById('freeSpins').value;
+                const features = document.getElementById('features').value;
+                const redirectUrl = document.getElementById('redirectUrl').value;
+                const isExclusive = document.getElementById('isExclusive').checked;
+                const rating = parseFloat(document.getElementById('rating').value);
+
+                if (!casinoName || !depositBonus || !features || !redirectUrl) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+
+                const formData = {
+                    casino_name: casinoName,
+                    logo_path: document.getElementById('casinoLogoPreview').src,
+                    rating: rating,
+                    deposit_bonus: depositBonus,
+                    free_spins: freeSpins,
+                    features: features.split('\n').map(f => f.trim()).filter(f => f),
+                    redirect_url: redirectUrl,
+                    is_exclusive: isExclusive
+                };
+
+                const response = await fetch('/api/top-rated-casinos', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(formData)
                 });
-                
-                const result = await response.json();
-                if (response.ok) {
-                    showAlert(result.message, true);
-                    loadBanners();
-                    e.target.reset();
-                    document.getElementById('logo_preview').style.display = 'none';
-                } else {
-                    showAlert(result.error);
-                }
-            } catch (error) {
-                showAlert('Error adding banner');
-            }
-        };
 
-        // Delete banner
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to add casino');
+                }
+
+                resetForm();
+                loadCasinos();
+                alert('Casino added successfully!');
+            } catch (error) {
+                console.error('Error adding casino:', error);
+                alert(error.message);
+            }
+        }
+
+        // Delete casino with confirmation
+        async function deleteCasino(id) {
+            if (!confirm('Are you sure you want to delete this casino?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/top-rated-casinos/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    const result = await response.json();
+                    throw new Error(result.error || 'Failed to delete casino');
+                }
+
+                alert('Casino deleted successfully!');
+                loadCasinos();
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message);
+            }
+        }
+
+        // Delete banner with confirmation
         async function deleteBanner(id) {
-            if (!confirm('Are you sure you want to delete this banner?')) return;
-            
+            if (!confirm('Are you sure you want to delete this banner?')) {
+                return;
+            }
+
             try {
                 const response = await fetch(`/api/banners/${id}`, {
                     method: 'DELETE'
                 });
-                const result = await response.json();
-                showAlert(result.message, true);
+
+                if (!response.ok) {
+                    const result = await response.json();
+                    throw new Error(result.error || 'Failed to delete banner');
+                }
+
+                alert('Banner deleted successfully!');
                 loadBanners();
             } catch (error) {
-                showAlert('Error deleting banner');
+                console.error('Error:', error);
+                alert(error.message);
             }
         }
 
-        // Edit banner
-        async function editBanner(id) {
-            const response = await fetch('/api/banners');
-            const banners = await response.json();
-            const banner = banners.find(b => b.id === id);
-            
-            if (banner) {
-                document.getElementById('casino_name').value = banner.casino_name;
-                document.getElementById('logo_path').value = banner.logo_path;
-                document.getElementById('bonus_amount').value = banner.bonus_amount;
-                document.getElementById('bonus_extra').value = banner.bonus_extra;
-                document.querySelector(`input[name="is_focused"][value="${banner.is_focused}"]`).checked = true;
-                document.getElementById('order').value = banner.order;
-                document.getElementById('background_color').value = banner.background_color;
-                
-                const preview = document.getElementById('logo_preview');
-                preview.src = banner.logo_path;
-                preview.style.display = 'block';
-                
-                document.getElementById('addBannerForm').onsubmit = async (e) => {
-                    e.preventDefault();
-                    const formData = {
-                        casino_name: document.getElementById('casino_name').value,
-                        logo_path: document.getElementById('logo_path').value,
-                        bonus_amount: document.getElementById('bonus_amount').value,
-                        bonus_extra: document.getElementById('bonus_extra').value,
-                        is_focused: document.querySelector('input[name="is_focused"]:checked').value,
-                        order: parseInt(document.getElementById('order').value),
-                        background_color: document.getElementById('background_color').value
-                    };
-
-                    try {
-                        const response = await fetch(`/api/banners/${id}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(formData)
-                        });
-                        
-                        const result = await response.json();
-                        showAlert(result.message, true);
-                        loadBanners();
-                        
-                        // Reset form and submit handler
-                        e.target.reset();
-                        document.getElementById('logo_preview').style.display = 'none';
-                        document.getElementById('addBannerForm').onsubmit = null;
-                        location.reload();
-                    } catch (error) {
-                        showAlert('Error updating banner');
-                    }
-                };
-            }
-        }
-
-        // Add color preset functionality
-        document.querySelectorAll('.color-preset').forEach(preset => {
-            preset.addEventListener('click', () => {
-                const color = preset.dataset.color;
-                document.getElementById('background_color').value = color;
-            });
-        });
-
+        // Show alert messages
         function showAlert(message, success = false) {
-            const alert = document.getElementById('alert');
+            const alert = document.createElement('div');
+            alert.className = `alert ${success ? 'success' : 'error'}`;
             alert.textContent = message;
-            alert.style.display = 'block';
-            alert.className = `alert ${success ? 'success' : ''}`;
+            
+            document.body.appendChild(alert);
+            
             setTimeout(() => {
-                alert.style.display = 'none';
+                alert.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => alert.remove(), 300);
             }, 3000);
         }
 
-        // Initial load
-        loadBanners();
+        // Drag and Drop handlers
+        let draggedCard = null;
+
+        function handleDragStart(e) {
+            draggedCard = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', this.dataset.casinoId);
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            document.querySelectorAll('.casino-card').forEach(card => {
+                card.classList.remove('drag-over');
+            });
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDragEnter(e) {
+            this.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        async function handleDrop(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            
+            if (draggedCard === this) return;
+            
+            this.classList.remove('drag-over');
+            const draggedId = parseInt(draggedCard.dataset.casinoId);
+            const dropId = parseInt(this.dataset.casinoId);
+            const draggedOrder = parseInt(draggedCard.dataset.order);
+            const dropOrder = parseInt(this.dataset.order);
+            
+            try {
+                // Update the orders in the database
+                const response = await fetch('/api/top-rated-casinos/reorder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        draggedId,
+                        dropId,
+                        draggedOrder,
+                        dropOrder
+                    })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to reorder casinos');
+                }
+
+                // Reload the casinos to show the new order
+                loadCasinos();
+            } catch (error) {
+                console.error('Error reordering casinos:', error);
+                showAlert(error.message);
+            }
+        }
+
+        // Update rating input handler
+        document.getElementById('rating').addEventListener('change', function() {
+            let value = parseFloat(this.value);
+            // Ensure the value is between 0.5 and 5
+            value = Math.max(0.5, Math.min(5, value));
+            // Round to nearest 0.5
+            value = Math.round(value * 2) / 2;
+            this.value = value;
+        });
+
+        // Add color preset functionality
+        document.querySelectorAll('.color-btn').forEach(preset => {
+            preset.addEventListener('click', () => {
+                document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+                preset.classList.add('active');
+            });
+        });
+
+        // Add color selection functionality
+        function selectBannerColor(button) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            button.classList.add('active');
+            
+            // Update preview background
+            const previewContainer = document.querySelector('.logo-preview');
+            if (previewContainer) {
+                previewContainer.style.background = button.dataset.color;
+            }
+        }
+
+        // Initialize functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBanners();
+            loadCasinos();
+        });
     </script>
 </body>
 </html>

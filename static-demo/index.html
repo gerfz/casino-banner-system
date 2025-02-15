@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             background-color: #494949;
@@ -24,6 +25,34 @@
         }
         .swiper-slide-active .featured-casino {
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+        }
+        .stars {
+            display: flex;
+            gap: 4px;
+            margin: 8px 0;
+        }
+        .stars i {
+            color: #ffd700;
+            font-size: 18px;
+        }
+        .play-btn {
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            padding: 10px 40px;
+            border-radius: 25px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 14px;
+            transition: background-color 0.2s, transform 0.1s;
+            display: inline-block;
+            min-width: 160px;
+            text-align: center;
+        }
+
+        .play-btn:hover {
+            background: #45a049;
+            transform: translateY(-1px);
         }
     </style>
 </head>
@@ -57,50 +86,8 @@
     <main class="site-main">
         <section id="top-casinos" class="casino-section">
             <h2 class="top-rated-title">Top Rated Casinos</h2>
-            <div class="casino-grid">
-                <!-- Top Casino 1 -->
-                <article class="casino-card top-rated">
-                    <div class="rank-badge">1</div>
-                    <div class="casino-logo">
-                        <img src="https://placehold.co/200x100/252525/ff2d55?text=Casino+1" alt="Casino 1">
-                    </div>
-                    <h3 class="casino-title">Spinz Casino</h3>
-                    <div class="casino-bonus">
-                        <span class="bonus-label">Welcome Package</span>
-                        <span class="bonus-amount">200% up to €500</span>
-                        <span class="bonus-extra">+ 100 Free Spins</span>
-                    </div>
-                    <div class="casino-features">
-                        <span class="feature">⚡ Instant Withdrawals</span>
-                        <span class="feature">🎮 Live Casino</span>
-                        <span class="feature">💳 Crypto Friendly</span>
-                    </div>
-                    <a href="#" class="casino-cta">
-                        Play Now
-                    </a>
-                </article>
-
-                <!-- Top Casino 2 -->
-                <article class="casino-card top-rated">
-                    <div class="rank-badge">2</div>
-                    <div class="casino-logo">
-                        <img src="https://placehold.co/200x100/252525/ff2d55?text=Casino+2" alt="Casino 2">
-                    </div>
-                    <h3 class="casino-title">Vice Casino</h3>
-                    <div class="casino-bonus">
-                        <span class="bonus-label">Welcome Package</span>
-                        <span class="bonus-amount">100% up to €300</span>
-                        <span class="bonus-extra">+ 150 Free Spins</span>
-                    </div>
-                    <div class="casino-features">
-                        <span class="feature">🎲 2000+ Games</span>
-                        <span class="feature">🏆 VIP Program</span>
-                        <span class="feature">💰 Daily Cashback</span>
-                    </div>
-                    <a href="#" class="casino-cta">
-                        Play Now
-                    </a>
-                </article>
+            <div class="casino-grid" id="top-rated-container">
+                <!-- Top rated casinos will be loaded dynamically -->
             </div>
         </section>
     </main>
@@ -132,9 +119,27 @@
                 const banners = await response.json();
                 const container = document.getElementById('banner-container');
                 
-                banners.sort((a, b) => a.order - b.order);
+                // Find gold banner
+                const goldIndex = banners.findIndex(b => b.background_color.includes('#FFD700'));
+                if (goldIndex !== -1) {
+                    // Remove gold banner
+                    const goldBanner = banners.splice(goldIndex, 1)[0];
+                    
+                    // Sort remaining banners (silver should be first, bronze last)
+                    banners.sort((a, b) => {
+                        const isSilverA = a.background_color.includes('#C0C0C0');
+                        const isSilverB = b.background_color.includes('#C0C0C0');
+                        if (isSilverA && !isSilverB) return -1;
+                        if (!isSilverA && isSilverB) return 1;
+                        return 0;
+                    });
+                    
+                    // Insert gold banner in the middle
+                    banners.splice(1, 0, goldBanner);
+                }
+                
                 container.innerHTML = banners.map(banner => `
-                    <div class="swiper-slide featured-casino" style="background-color: ${banner.background_color}">
+                    <div class="swiper-slide featured-casino" style="background: ${banner.background_color}">
                         <div class="featured-content">
                             <div class="featured-logo">
                                 <img src="${banner.logo_path}" alt="${banner.casino_name}">
@@ -144,20 +149,20 @@
                                     <span class="bonus-amount">${banner.bonus_amount}</span>
                                     <span class="bonus-extra">${banner.bonus_extra}</span>
                                 </div>
-                                <a href="#" class="featured-cta">Play Now</a>
+                                <a href="${banner.redirect_url}" class="play-btn" target="_blank" rel="noopener noreferrer">PLAY NOW</a>
                             </div>
                         </div>
                     </div>
                 `).join('');
 
-                // Initialize Swiper with the previous configuration
+                // Initialize Swiper
                 const swiper = new Swiper('.swiper', {
                     slidesPerView: 3,
                     centeredSlides: true,
                     loop: true,
                     speed: 600,
                     spaceBetween: 40,
-                    initialSlide: banners.findIndex(banner => banner.is_focused),
+                    initialSlide: 1, // Start with middle slide
                     loopedSlides: 3,
                     watchSlidesProgress: true,
                     slideToClickedSlide: true,
@@ -190,8 +195,83 @@
             }
         }
 
-        // Load banners when page loads
-        document.addEventListener('DOMContentLoaded', loadBanners);
+        // Load top rated casinos
+        async function loadTopRatedCasinos() {
+            try {
+                const response = await fetch('/api/top-rated-casinos');
+                const casinos = await response.json();
+                const container = document.getElementById('top-rated-container');
+                
+                casinos.sort((a, b) => a.order - b.order);
+                container.innerHTML = casinos.map(casino => `
+                    <article class="casino-card">
+                        ${casino.is_exclusive ? '<div class="exclusive-badge">Exclusive</div>' : ''}
+                        <div class="casino-logo">
+                            <img src="${casino.logo_path}" alt="${casino.casino_name}">
+                        </div>
+                        
+                        <div class="name-section">
+                            <h3 class="casino-title">${casino.casino_name}</h3>
+                            ${displayStars(casino.rating)}
+                        </div>
+
+                        <div class="bonus-section">
+                            <span class="bonus-label">DEPOSIT BONUS</span>
+                            <span class="bonus-amount">${casino.deposit_bonus}</span>
+                            <span class="bonus-extra">${casino.free_spins}</span>
+                        </div>
+
+                        <div class="features-section">
+                            ${Array.isArray(casino.features) 
+                                ? casino.features.map(feature => 
+                                    `<span class="feature">${feature.trim()}</span>`
+                                ).join('')
+                                : casino.features.split(',').map(feature => 
+                                    `<span class="feature">${feature.trim()}</span>`
+                                ).join('')
+                            }
+                        </div>
+
+                        <a href="${casino.redirect_url}" class="play-btn" target="_blank" rel="noopener noreferrer">PLAY NOW</a>
+                    </article>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading top rated casinos:', error);
+            }
+        }
+
+        function displayStars(rating) {
+            rating = parseFloat(rating); // Ensure rating is a number
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = (rating % 1) >= 0.5;
+            const emptyStars = 5 - Math.ceil(rating);
+            
+            let html = '<div class="stars">';
+            
+            // Full stars
+            for (let i = 0; i < fullStars; i++) {
+                html += '<i class="fas fa-star"></i>';
+            }
+            
+            // Half star
+            if (hasHalfStar) {
+                html += '<i class="fas fa-star-half-alt"></i>';
+            }
+            
+            // Empty stars
+            for (let i = 0; i < emptyStars; i++) {
+                html += '<i class="far fa-star"></i>';
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        // Load content when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBanners();
+            loadTopRatedCasinos();
+        });
     </script>
 </body>
 </html>
