@@ -255,6 +255,9 @@ def delete_banner(id):
 
 @app.route('/api/top-rated-casinos', methods=['GET'])
 def get_top_rated_casinos():
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'Unauthorized'}), 401
+        
     try:
         casinos = TopRatedCasino.query.order_by(TopRatedCasino.order).all()
         return jsonify([{

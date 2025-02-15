@@ -812,67 +812,60 @@
             }
         }
 
-        // Load casinos with animation
         async function loadCasinos() {
             try {
-                const response = await fetch('/api/top-rated-casinos');
+                const response = await fetch('/api/top-rated-casinos', {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.headers.get('content-type')?.includes('application/json')) {
+                        const error = await response.json();
+                        throw new Error(error.error || 'Failed to load casinos');
+                    } else {
+                        throw new Error('Failed to load casinos');
+                    }
+                }
+
                 const casinos = await response.json();
+                const container = document.getElementById('casinosList');
                 
-                const casinosList = document.getElementById('casinosList');
-                casinosList.innerHTML = '';
-                
-                casinos.forEach((casino, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'casino-card';
-                    card.draggable = true;
-                    card.dataset.casinoId = casino.id;
-                    card.dataset.order = casino.order;
-                    
-                    card.innerHTML = `
-                        <div class="order-handle" title="Drag to reorder">☰</div>
-                        ${casino.is_exclusive ? '<div class="exclusive-badge">Exclusive</div>' : ''}
-                        <div class="casino-content">
-                            <div class="casino-logo">
-                                <img src="${casino.logo_path}" alt="${casino.casino_name}">
+                if (casinos.length === 0) {
+                    container.innerHTML = '<p class="no-items">No casinos added yet</p>';
+                    return;
+                }
+
+                container.innerHTML = casinos.map(casino => `
+                    <div class="casino-item">
+                        <div class="casino-logo">
+                            <img src="/static-demo/${casino.logo_path}" alt="${casino.casino_name} logo">
+                        </div>
+                        <div class="casino-info">
+                            <h3>${casino.casino_name}</h3>
+                            <div class="bonus-details">
+                                <p class="deposit-bonus">${casino.deposit_bonus}</p>
+                                <p class="free-spins">${casino.free_spins}</p>
                             </div>
-                            <h4 class="casino-title">${casino.casino_name}</h4>
-                            <div class="casino-rating">
-                                ${displayStars(casino.rating)}
-                            </div>
-                            <div class="bonus-info">
-                                <div>${casino.deposit_bonus}</div>
-                                <div>${casino.free_spins}</div>
-                            </div>
+                            <div class="rating">${displayStars(casino.rating)}</div>
                             <div class="features">
-                                ${Array.isArray(casino.features) 
-                                    ? casino.features.map(feature => 
-                                        `<div class="feature">${feature.trim()}</div>`
-                                    ).join('')
-                                    : casino.features.split(',').map(feature => 
-                                        `<div class="feature">${feature.trim()}</div>`
-                                    ).join('')
-                                }
+                                ${casino.features.split('\n').map(feature => 
+                                    `<span class="feature">${feature.trim()}</span>`
+                                ).join('')}
                             </div>
+                            ${casino.is_exclusive ? '<span class="exclusive-tag">Exclusive</span>' : ''}
                             <div class="casino-actions">
-                                <button class="edit-btn" onclick="editCasino(${casino.id})">Edit</button>
-                                <button class="delete-btn" onclick="deleteCasino(${casino.id})">Delete</button>
+                                <button onclick="editCasino(${casino.id})" class="edit-btn">Edit</button>
+                                <button onclick="deleteCasino(${casino.id})" class="delete-btn">Delete</button>
                             </div>
                         </div>
-                    `;
-                    
-                    // Add drag and drop event listeners
-                    card.addEventListener('dragstart', handleDragStart);
-                    card.addEventListener('dragend', handleDragEnd);
-                    card.addEventListener('dragover', handleDragOver);
-                    card.addEventListener('dragenter', handleDragEnter);
-                    card.addEventListener('dragleave', handleDragLeave);
-                    card.addEventListener('drop', handleDrop);
-                    
-                    casinosList.appendChild(card);
-                });
+                    </div>
+                `).join('');
             } catch (error) {
                 console.error('Error loading casinos:', error);
-                showAlert('Error loading casinos');
+                const container = document.getElementById('casinosList');
+                container.innerHTML = '<p class="error">Failed to load casinos. Please try again.</p>';
             }
         }
 
