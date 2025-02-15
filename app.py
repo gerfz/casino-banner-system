@@ -285,51 +285,92 @@ def get_top_rated_casinos():
 @login_required
 def add_top_rated_casino():
     try:
-        if not request.is_json:
-            return jsonify({'error': 'Content-Type must be application/json'}), 400
-            
-        data = request.json
-        if data is None:
-            return jsonify({'error': 'Invalid JSON data'}), 400
+        if 'logo' not in request.files:
+            return jsonify({'error': 'No logo file provided'}), 400
+
+        logo = request.files['logo']
+        if not logo.filename:
+            return jsonify({'error': 'No file selected'}), 400
+
+        # Get form data
+        casino_name = request.form.get('casino_name')
+        deposit_bonus = request.form.get('deposit_bonus')
+        free_spins = request.form.get('free_spins')
+        redirect_url = request.form.get('redirect_url')
+        rating = float(request.form.get('rating', '0'))
+        features = request.form.get('features', '')
+        is_exclusive = request.form.get('is_exclusive') == 'true'
 
         # Validate required fields
-        required_fields = ['casino_name', 'logo_path', 'rating', 'deposit_bonus', 'features', 'redirect_url']
-        missing_fields = [field for field in required_fields if not data.get(field)]
-        if missing_fields:
-            return jsonify({'error': f"Missing required fields: {', '.join(missing_fields)}"}), 400
+        if not all([casino_name, deposit_bonus, free_spins, redirect_url]):
+            return jsonify({'error': 'All fields are required'}), 400
 
-        try:
-            rating = float(data['rating'])
-            # Validate rating range
-            if not (0.5 <= rating <= 5.0):
-                return jsonify({'error': 'Rating must be between 0.5 and 5.0'}), 400
-            # Round to nearest 0.5
-            rating = round(rating * 2) / 2
-        except (ValueError, TypeError):
-            return jsonify({'error': 'Invalid rating value'}), 400
+        # Save logo file
+        if logo and allowed_file(logo.filename):
+            filename = secure_filename(logo.filename)
+            logo_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            logo.save(logo_path)
+        else:
+            return jsonify({'error': 'Invalid file type'}), 400
 
-        # Get the highest order number and add 1
-        highest_order = db.session.query(db.func.max(TopRatedCasino.order)).scalar() or 0
-
-        # Create casino object
+        # Create new casino
         casino = TopRatedCasino(
-            casino_name=data['casino_name'],
-            logo_path=data['logo_path'],
-            rating=rating,  # Use the validated and rounded rating
-            deposit_bonus=data['deposit_bonus'],
-            free_spins=data.get('free_spins', ''),
-            features=','.join(data['features']) if isinstance(data['features'], list) else data['features'],
-            order=highest_order + 1,
-            redirect_url=data['redirect_url'],
-            is_exclusive=data.get('is_exclusive', False)
+            casino_name=casino_name,
+            logo_path=filename,
+            deposit_bonus=deposit_bonus,
+            free_spins=free_spins,
+            redirect_url=redirect_url,
+            rating=rating,
+            features=features,
+            is_exclusive=is_exclusive
         )
 
         db.session.add(casino)
         db.session.commit()
 
-        return jsonify({'message': 'Casino added successfully', 'id': casino.id})
+        return jsonify({
+            'message': 'Casino added successfully',
+            'casino': {
+                'id': casino.id,
+                'casino_name': casino.casino_name,
+                'logo_path': casino.logo_path,
+                'deposit_bonus': casino.deposit_bonus,
+                'free_spins': casino.free_spins,
+                'redirect_url': casino.redirect_url,
+                'rating': casino.rating,
+                'features': casino.features,
+                'is_exclusive': casino.is_exclusive
+            }
+        })
+
     except Exception as e:
         db.session.rollback()
+        logging.error(f"Error adding casino: {str(e)}")
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/upload-logo', methods=['POST'])
+@login_required
+def upload_logo():
+    try:
+        if 'logo' not in request.files:
+            return jsonify({'error': 'No file provided'}), 400
+        
+        file = request.files['logo']
+        if not file.filename:
+            return jsonify({'error': 'No file selected'}), 400
+            
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return jsonify({
+                'message': 'File uploaded successfully',
+                'path': filename
+            })
+        
+        return jsonify({'error': 'Invalid file type'}), 400
+        
+    except Exception as e:
+        logging.error(f"Error uploading file: {str(e)}")
         return jsonify({'error': str(e)}), 400
 
 @app.route('/api/top-rated-casinos/<int:id>', methods=['PUT'])

@@ -1069,9 +1069,21 @@
                     throw new Error(error.error || 'Failed to add casino');
                 }
 
-                resetForm();
+                const result = await response.json();
+                console.log('Casino added:', result);
+
+                // Clear form
+                document.getElementById('casinoName').value = '';
+                document.getElementById('depositBonus').value = '';
+                document.getElementById('freeSpins').value = '';
+                document.getElementById('redirectUrl').value = '';
+                document.getElementById('rating').value = '';
+                document.getElementById('features').value = '';
+                document.getElementById('isExclusive').checked = false;
+                document.getElementById('casinoLogoPreview').src = '/static-demo/placeholder.png';
+
+                // Reload casinos
                 loadCasinos();
-                alert('Casino added successfully!');
             } catch (error) {
                 console.error('Error adding casino:', error);
                 alert(error.message);
