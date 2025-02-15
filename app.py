@@ -38,8 +38,8 @@ if 'PYTHONANYWHERE_DOMAIN' in os.environ:
 else:
     db_path = 'casino.db'  # Local development
 
+app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static-demo', 'pictures')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
-app.config['UPLOAD_FOLDER'] = os.path.join('static-demo', 'pictures')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -294,8 +294,7 @@ def add_top_rated_casino():
 
         # Save the logo file
         filename = secure_filename(logo.filename)
-        logo_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        logo.save(logo_path)
+        logo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
         # Get form data with defaults
         casino_name = request.form.get('casino_name')
@@ -323,7 +322,7 @@ def add_top_rated_casino():
         # Create new casino
         casino = TopRatedCasino(
             casino_name=casino_name,
-            logo_path=filename,
+            logo_path=filename,  # Store just the filename
             deposit_bonus=deposit_bonus,
             free_spins=free_spins,
             redirect_url=redirect_url,

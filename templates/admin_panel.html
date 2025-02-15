@@ -650,6 +650,125 @@
         .color-btn.bronze {
             background: linear-gradient(135deg, #CD7F32, #8B4513);
         }
+        /* Casino section styles */
+        .management-section {
+            padding: 20px;
+            background: #1E1E1E;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .management-section h2 {
+            color: #FF3366;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .form-section {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .form-layout {
+            display: flex;
+            gap: 15px;
+        }
+
+        .logo-preview-container {
+            width: 120px;
+            flex-shrink: 0;
+        }
+
+        .preview-box {
+            width: 120px;
+            height: 120px;
+            border: 1px dashed #4A6EE0;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: #141414;
+        }
+
+        .preview-box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .upload-btn {
+            width: 120px;
+            background: #4A6EE0;
+            color: white;
+            border: none;
+            padding: 8px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .details-form {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .details-form input,
+        .details-form textarea {
+            width: 100%;
+            padding: 8px 12px;
+            background: #141414;
+            border: 1px solid #333;
+            border-radius: 4px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        .details-form textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .exclusive-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #999;
+            margin: 5px 0;
+        }
+
+        .exclusive-option input[type="checkbox"] {
+            width: auto;
+        }
+
+        .add-btn {
+            background: #FF3366;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 14px;
+            align-self: flex-start;
+        }
+
+        .add-btn:hover {
+            background: #E62E5C;
+        }
+
+        .add-new-title {
+            color: #4A6EE0;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -703,32 +822,38 @@
         <section class="management-section">
             <h2>Top Rated Casinos</h2>
             
-            <div class="add-casino-form">
+            <div class="add-form">
                 <h3>Add New Casino</h3>
-                <form id="addCasinoForm" onsubmit="event.preventDefault(); addTopRatedCasino();">
-                    <div class="form-group">
-                        <div class="logo-upload">
-                            <div class="logo-preview">
-                                <img id="casinoLogoPreview" src="/static-demo/placeholder.png" alt="Logo preview">
-                            </div>
-                            <button type="button" class="choose-file-btn" onclick="document.getElementById('casinoLogoFile').click()">Choose Logo File</button>
-                            <input type="file" id="casinoLogoFile" accept="image/*" style="display: none;" onchange="handleCasinoLogoUpload(event)">
+                <div class="form-grid">
+                    <div class="form-group logo-section">
+                        <div class="logo-preview">
+                            <img id="casinoLogoPreview" src="/static-demo/images/placeholder.png" alt="Logo preview">
                         </div>
-                        <div class="form-inputs">
-                            <input type="text" id="casinoName" placeholder="Casino Name" required>
-                            <input type="text" id="depositBonus" placeholder="Deposit Bonus" required>
-                            <input type="text" id="freeSpins" placeholder="Free Spins" required>
-                            <input type="text" id="redirectUrl" placeholder="Redirect URL" required>
-                            <input type="number" id="rating" placeholder="Rating (0.5-5.0)" min="0.5" max="5.0" step="0.5" required>
-                            <textarea id="features" placeholder="Features (one per line)"></textarea>
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="isExclusive">
-                                Exclusive Offer
-                            </label>
+                        <button class="choose-file-btn" onclick="document.getElementById('casinoLogoFile').click()">
+                            Choose Logo File
+                        </button>
+                        <input type="file" id="casinoLogoFile" hidden accept="image/*" onchange="handleCasinoLogoUpload(event)">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" id="casinoName" placeholder="Casino Name" class="form-input">
+                        <input type="text" id="depositBonus" placeholder="Header Text (eg. 300% up to €1500)" class="form-input">
+                        <input type="text" id="freeSpins" placeholder="Subtext (eg. +150 Free Spins)" class="form-input">
+                        <input type="text" id="redirectUrl" placeholder="Redirect URL" class="form-input">
+                        <input type="number" id="rating" placeholder="Rating (0.5-5.0)" min="0.5" max="5" step="0.5" value="5" class="form-input">
+                        <textarea id="features" placeholder="Features (one per line)" class="form-input"></textarea>
+                        
+                        <div class="exclusive-checkbox">
+                            <input type="checkbox" id="isExclusive">
+                            <label for="isExclusive">Exclusive Offer</label>
                         </div>
                     </div>
-                    <button type="submit" class="submit-btn">Add Casino</button>
-                </form>
+
+                    <div class="form-group">
+                        <!-- This column is empty to match the banner section's 3-column layout -->
+                    </div>
+                </div>
+                <button class="submit-btn" onclick="addTopRatedCasino()">Add Casino</button>
             </div>
 
             <div class="items-list" id="casinosList">
@@ -761,7 +886,7 @@
                 document.getElementById('redirectUrl').value = '';
                 document.getElementById('features').value = '';
                 document.getElementById('isExclusive').checked = false;
-                document.getElementById('casinoLogoPreview').src = '/static-demo/placeholder.png';
+                document.getElementById('casinoLogoPreview').src = '/static-demo/images/placeholder.png';
                 currentRating = 5; // Reset to default rating
                 document.getElementById('rating').value = currentRating;
             } else {
@@ -812,60 +937,67 @@
             }
         }
 
+        // Load casinos with animation
         async function loadCasinos() {
             try {
-                const response = await fetch('/api/top-rated-casinos', {
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    if (response.headers.get('content-type')?.includes('application/json')) {
-                        const error = await response.json();
-                        throw new Error(error.error || 'Failed to load casinos');
-                    } else {
-                        throw new Error('Failed to load casinos');
-                    }
-                }
-
+                const response = await fetch('/api/top-rated-casinos');
                 const casinos = await response.json();
-                const container = document.getElementById('casinosList');
                 
-                if (casinos.length === 0) {
-                    container.innerHTML = '<p class="no-items">No casinos added yet</p>';
-                    return;
-                }
-
-                container.innerHTML = casinos.map(casino => `
-                    <div class="casino-item">
-                        <div class="casino-logo">
-                            <img src="/static-demo/${casino.logo_path}" alt="${casino.casino_name} logo">
-                        </div>
-                        <div class="casino-info">
-                            <h3>${casino.casino_name}</h3>
-                            <div class="bonus-details">
-                                <p class="deposit-bonus">${casino.deposit_bonus}</p>
-                                <p class="free-spins">${casino.free_spins}</p>
+                const casinosList = document.getElementById('casinosList');
+                casinosList.innerHTML = '';
+                
+                casinos.forEach((casino, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'casino-card';
+                    card.draggable = true;
+                    card.dataset.casinoId = casino.id;
+                    card.dataset.order = casino.order;
+                    
+                    card.innerHTML = `
+                        <div class="order-handle" title="Drag to reorder">☰</div>
+                        ${casino.is_exclusive ? '<div class="exclusive-badge">Exclusive</div>' : ''}
+                        <div class="casino-content">
+                            <div class="casino-logo">
+                                <img src="/static-demo/pictures/${casino.logo_path}" alt="${casino.casino_name}" onerror="this.src='/static-demo/images/placeholder.png'">
                             </div>
-                            <div class="rating">${displayStars(casino.rating)}</div>
+                            <h4 class="casino-title">${casino.casino_name}</h4>
+                            <div class="casino-rating">
+                                ${displayStars(casino.rating)}
+                            </div>
+                            <div class="bonus-info">
+                                <div>${casino.deposit_bonus}</div>
+                                <div>${casino.free_spins}</div>
+                            </div>
                             <div class="features">
-                                ${casino.features.split('\n').map(feature => 
-                                    `<span class="feature">${feature.trim()}</span>`
-                                ).join('')}
+                                ${Array.isArray(casino.features) 
+                                    ? casino.features.map(feature => 
+                                        `<div class="feature">${feature.trim()}</div>`
+                                    ).join('')
+                                    : casino.features.split(',').map(feature => 
+                                        `<div class="feature">${feature.trim()}</div>`
+                                    ).join('')
+                                }
                             </div>
-                            ${casino.is_exclusive ? '<span class="exclusive-tag">Exclusive</span>' : ''}
                             <div class="casino-actions">
-                                <button onclick="editCasino(${casino.id})" class="edit-btn">Edit</button>
-                                <button onclick="deleteCasino(${casino.id})" class="delete-btn">Delete</button>
+                                <button class="edit-btn" onclick="editCasino(${casino.id})">Edit</button>
+                                <button class="delete-btn" onclick="deleteCasino(${casino.id})">Delete</button>
                             </div>
                         </div>
-                    </div>
-                `).join('');
+                    `;
+                    
+                    // Add drag and drop event listeners
+                    card.addEventListener('dragstart', handleDragStart);
+                    card.addEventListener('dragend', handleDragEnd);
+                    card.addEventListener('dragover', handleDragOver);
+                    card.addEventListener('dragenter', handleDragEnter);
+                    card.addEventListener('dragleave', handleDragLeave);
+                    card.addEventListener('drop', handleDrop);
+                    
+                    casinosList.appendChild(card);
+                });
             } catch (error) {
                 console.error('Error loading casinos:', error);
-                const container = document.getElementById('casinosList');
-                container.innerHTML = '<p class="error">Failed to load casinos. Please try again.</p>';
+                showAlert('Error loading casinos');
             }
         }
 
@@ -1020,7 +1152,6 @@
         }
 
         async function addTopRatedCasino() {
-            const form = document.getElementById('addCasinoForm');
             const casinoName = document.getElementById('casinoName').value;
             const depositBonus = document.getElementById('depositBonus').value;
             const freeSpins = document.getElementById('freeSpins').value;
@@ -1031,7 +1162,7 @@
             const logoFile = document.getElementById('casinoLogoFile').files[0];
 
             if (!casinoName || !depositBonus || !freeSpins || !redirectUrl || !rating || !logoFile) {
-                alert('Please fill in all required fields and select a logo');
+                showAlert('Please fill in all required fields and select a logo');
                 return;
             }
 
@@ -1057,17 +1188,16 @@
                     throw new Error(result.error || 'Failed to add casino');
                 }
 
-                // Clear form
-                form.reset();
-                document.getElementById('casinoLogoPreview').src = '/static-demo/placeholder.png';
+                // Reset the form using our resetForm function
+                resetForm('casino');
                 
                 // Reload casinos
                 loadCasinos();
                 
-                alert('Casino added successfully!');
+                showAlert('Casino added successfully!', true);
             } catch (error) {
                 console.error('Error:', error);
-                alert(error.message);
+                showAlert(error.message);
             }
         }
 

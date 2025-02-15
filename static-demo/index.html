@@ -142,7 +142,7 @@
                     <div class="swiper-slide featured-casino" style="background: ${banner.background_color}">
                         <div class="featured-content">
                             <div class="featured-logo">
-                                <img src="${banner.logo_path}" alt="${banner.casino_name}">
+                                <img src="/static-demo/pictures/${banner.logo_path}" alt="${banner.casino_name}" onerror="this.src='/static-demo/images/placeholder.png'">
                             </div>
                             <div class="featured-info">
                                 <div class="featured-bonus">
@@ -207,7 +207,7 @@
                     <article class="casino-card">
                         ${casino.is_exclusive ? '<div class="exclusive-badge">Exclusive</div>' : ''}
                         <div class="casino-logo">
-                            <img src="${casino.logo_path}" alt="${casino.casino_name}">
+                            <img src="/static-demo/pictures/${casino.logo_path}" alt="${casino.casino_name}" onerror="this.src='/static-demo/images/placeholder.png'">
                         </div>
                         
                         <div class="name-section">
