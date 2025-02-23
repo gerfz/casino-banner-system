@@ -98,14 +98,30 @@
                 const casinos = await response.json();
                 const container = document.getElementById('new-casinos-container');
                 
-                casinos.sort((a, b) => a.order_new - b.order_new);
-                container.innerHTML = casinos.map(casino => {
+                // Filter out casinos with order_new = -1 and sort the remaining ones
+                const filteredCasinos = casinos
+                    .filter(casino => casino.order_new >= 0)
+                    .sort((a, b) => a.order_new - b.order_new);
+
+                container.innerHTML = filteredCasinos.map(casino => {
                     // Split features by newlines and create list items
                     const featuresList = casino.features
                         .split('\n')
                         .filter(feature => feature.trim().length > 0)
                         .map(feature => `<div class="feature">${feature.trim()}</div>`)
                         .join('');
+
+                    // Parse payment methods if it's a string
+                    let paymentMethods = [];
+                    try {
+                        paymentMethods = casino.payment_methods ? 
+                            (typeof casino.payment_methods === 'string' ? 
+                                JSON.parse(casino.payment_methods) : 
+                                casino.payment_methods) : 
+                            [];
+                    } catch (e) {
+                        console.error('Error parsing payment methods:', e);
+                    }
 
                     return `
                         <div class="casino-card">
@@ -127,6 +143,14 @@
                                 </div>
                                 <div class="casino-features">
                                     ${featuresList}
+                                </div>
+                                <div class="payment-methods">
+                                    <div class="payment-methods-header">PAYMENT METHODS</div>
+                                    <div class="payment-methods-icons">
+                                        ${paymentMethods.map(method => `
+                                            <img src="/static-demo/pictures/${method}.png" alt="${method}">
+                                        `).join('')}
+                                    </div>
                                 </div>
                             </div>
                             <a href="${casino.redirect_url}" class="play-btn">PLAY NOW</a>

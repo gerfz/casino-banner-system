@@ -231,11 +231,20 @@
             transition: all 0.3s ease;
         }
         .edit-btn {
-            background: #4361ee;
+            background: #4CAF50;
             color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
+
         .edit-btn:hover {
-            background: #3651d8;
+            background: #45a049;
+            transform: translateY(-1px);
         }
         .delete-btn {
             background: #ff4757;
@@ -386,108 +395,103 @@
         }
 
         .casino-content {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .casino-main {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
         }
 
         .casino-logo {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 15px;
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 5px;
+            flex-shrink: 0;
+        }
+
+        .casino-info {
+            flex-grow: 1;
+        }
+
+        .casino-header {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
         }
 
-        .casino-logo img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        .casino-title {
-            color: white;
-            margin: 0 0 10px;
+        .casino-header h3 {
+            margin: 0;
+            color: #fff;
             font-size: 1.2em;
         }
 
-        .casino-rating {
-            margin: 8px 0;
-            text-align: center;
+        .casino-details {
+            color: #ccc;
         }
 
-        .stars {
-            display: inline-flex;
-            gap: 1px;
-        }
-
-        .stars i {
-            color: #FFD700;
-            font-size: 16px;
-            text-shadow: 0 0 1px rgba(0,0,0,0.2);
-        }
-
-        .stars i.far {
-            color: #666;
-        }
-
-        .bonus-info {
-            margin: 10px 0;
-            color: #4a90e2;
+        .casino-details p {
+            margin: 5px 0;
             font-size: 0.9em;
         }
 
-        .bonus-info > div {
-            margin: 5px 0;
-        }
-
-        .features {
-            margin: 15px 0;
+        .casino-payment-methods {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
         }
 
-        .feature {
-            background: #3a3a3a;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-size: 0.85em;
-            color: #ddd;
+        .casino-payment-methods img {
+            width: 35px;
+            height: auto;
+            object-fit: contain;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            padding: 3px;
         }
 
         .casino-actions {
-            margin-top: 15px;
             display: flex;
             gap: 10px;
-            justify-content: center;
+            margin-left: auto;
         }
 
         .edit-btn, .delete-btn {
-            padding: 6px 15px;
-            border: none;
+            padding: 6px 12px;
             border-radius: 4px;
+            border: none;
             cursor: pointer;
             font-size: 0.9em;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
         }
-        .stars {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-            justify-content: center;
+
+        .edit-btn {
+            background: #4CAF50;
+            color: white;
         }
-        .stars i {
-            color: #ffd700;
-            font-size: 28px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+
+        .delete-btn {
+            background: #f44336;
+            color: white;
         }
-        .stars i:hover {
-            transform: scale(1.2);
+
+        .edit-btn:hover {
+            background: #45a049;
         }
-        .stars i.active {
-            filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.7));
+
+        .delete-btn:hover {
+            background: #da190b;
         }
         .add-casino-section {
             background: #2c2c2c;
@@ -1012,6 +1016,103 @@
             margin: 2px 0;
             color: #aaa;
         }
+
+        .casino-actions {
+            margin-top: 10px;
+        }
+
+        .delete-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #ff2e45;
+            transform: translateY(-1px);
+        }
+        .payment-methods-section {
+            margin: 20px 0;
+        }
+
+        .payment-methods-section h4 {
+            color: #4361ee;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .payment-methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .payment-method-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: #333;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .payment-method-item:hover {
+            background: #444;
+        }
+
+        .payment-method-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .payment-methods-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+
+        .payment-method input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .payment-method label {
+            color: #fff;
+            cursor: pointer;
+        }
+        .payment-methods {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .payment-methods img {
+            width: 50px;
+            height: auto;
+            object-fit: contain;
+        }
     </style>
 </head>
 <body>
@@ -1083,12 +1184,50 @@
                         <input type="text" id="depositBonus" placeholder="Header Text (eg. 300% up to €1500)" class="form-input">
                         <input type="text" id="freeSpins" placeholder="Subtext (eg. +150 Free Spins)" class="form-input">
                         <input type="text" id="redirectUrl" placeholder="Redirect URL" class="form-input">
-                        <input type="number" id="rating" placeholder="Rating (0.5-5.0)" min="0.5" max="5" step="0.5" value="5" class="form-input">
+                        <input type="number" id="rating" placeholder="Rating (0.5-5.0)" min="0.5" max="5" step="0.5" value="5" class="form-input" onchange="updateRating(this.value)">
                         <textarea id="features" placeholder="Features (one per line)" class="form-input features-input"></textarea>
                         
                         <div class="exclusive-checkbox">
                             <input type="checkbox" id="isExclusive">
                             <label for="isExclusive">Exclusive Offer</label>
+                        </div>
+                        
+                        <div class="payment-methods-section">
+                            <h4>Payment Methods</h4>
+                            <div class="payment-methods-checkboxes">
+                                <div class="payment-method">
+                                    <input type="checkbox" name="payment_methods" value="visa">
+                                    <label>Visa</label>
+                                </div>
+                                <div class="payment-method">
+                                    <input type="checkbox" name="payment_methods" value="mastercard">
+                                    <label>Mastercard</label>
+                                </div>
+                                <div class="payment-method">
+                                    <input type="checkbox" name="payment_methods" value="revolut">
+                                    <label>Revolut</label>
+                                </div>
+                                <div class="payment-method">
+                                    <input type="checkbox" name="payment_methods" value="trustly">
+                                    <label>Trustly</label>
+                                </div>
+                                <div class="payment-method">
+                                    <input type="checkbox" name="payment_methods" value="bank">
+                                    <label>Bank Transfer</label>
+                                </div>
+                                <div class="payment-method">
+                                    <input type="checkbox" name="payment_methods" value="btc">
+                                    <label>Bitcoin</label>
+                                </div>
+                                <div class="payment-method">
+                                    <input type="checkbox" name="payment_methods" value="eth">
+                                    <label>Ethereum</label>
+                                </div>
+                                <div class="payment-method">
+                                    <input type="checkbox" name="payment_methods" value="neteller">
+                                    <label>Neteller</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1096,7 +1235,9 @@
                         <!-- This column is empty to match the banner section's 3-column layout -->
                     </div>
                 </div>
-                <button class="submit-btn" onclick="addTopRatedCasino()">Add Casino</button>
+                <input type="hidden" id="editingCasinoId" value="">
+                <button id="submitBtn" class="submit-btn" onclick="addTopRatedCasino()">Add Casino</button>
+                <button id="cancelBtn" class="cancel-btn" onclick="cancelEdit()" style="display: none;">Cancel</button>
             </div>
 
             <div class="casino-management">
@@ -1122,9 +1263,8 @@
 
     <script>
         let currentRating = 5; // Default rating
-        let currentPage = 'front'; // Default page
         let selectedBannerColor = '#1a1a1a'; // Default banner color
-
+        
         function changePage() {
             currentPage = document.getElementById('pageSelect').value;
             loadCasinos();
@@ -1132,7 +1272,7 @@
 
         // Rating functionality
         function updateRating(value) {
-            value = parseFloat(value);
+            value = parseFloat(value); // Ensure value is a number
             // Ensure value is between 0.5 and 5
             if (value < 0.5) value = 0.5;
             if (value > 5) value = 5;
@@ -1149,6 +1289,7 @@
                 document.getElementById('depositBonus').value = '';
                 document.getElementById('freeSpins').value = '';
                 document.getElementById('redirectUrl').value = '';
+                document.getElementById('rating').value = '5';
                 document.getElementById('features').value = '';
                 document.getElementById('isExclusive').checked = false;
                 document.getElementById('casinoLogoPreview').src = '';
@@ -1215,29 +1356,29 @@
         // Load casinos with animation
         async function loadCasinos() {
             try {
-                const response = await fetch('/api/top-rated-casinos');
+                const response = await fetch(`/api/top-rated-casinos?page=${currentPage}`);
                 const casinos = await response.json();
                 
-                // Sort casinos based on current page
-                const sortedCasinos = [...casinos].sort((a, b) => {
-                    switch(currentPage) {
-                        case 'front':
-                            return a.order_front - b.order_front;
-                        case 'all':
-                            return a.order_all - b.order_all;
-                        case 'new':
-                            return a.order_new - b.order_new;
-                        case 'pp':
-                            return a.order_pp - b.order_pp;
-                        default:
-                            return a.order_front - b.order_front;
-                    }
-                });
-
-                const casinoList = document.getElementById('casinoList');
-                casinoList.innerHTML = '';
+                const casinoContainer = document.getElementById('casinoList');
+                casinoContainer.innerHTML = '';
                 
-                sortedCasinos.forEach(casino => {
+                casinos.forEach(casino => {
+                    // Parse payment methods
+                    let paymentMethodsArray = [];
+                    try {
+                        paymentMethodsArray = casino.payment_methods ? JSON.parse(casino.payment_methods) : [];
+                    } catch (e) {
+                        console.error('Error parsing payment methods:', e);
+                    }
+                    
+                    const logoPath = casino.logo_path.startsWith('/') ? casino.logo_path : `/static-demo/pictures/${casino.logo_path}`;
+                    const paymentMethodsHtml = paymentMethodsArray.length > 0
+                        ? paymentMethodsArray.map(method => {
+                            const methodPath = method.startsWith('/') ? method : `/static-demo/pictures/${method}.png`;
+                            return `<img src="${methodPath}" alt="${method}" class="payment-icon">`;
+                        }).join('')
+                        : '';
+
                     const casinoElement = document.createElement('div');
                     casinoElement.className = 'casino-item';
                     casinoElement.draggable = true;
@@ -1249,50 +1390,130 @@
                     
                     casinoElement.innerHTML = `
                         <div class="casino-content">
-                            <img src="/static-demo/pictures/${casino.logo_path}" alt="${casino.casino_name}" class="casino-logo">
-                            <div class="casino-details">
-                                <h3>${casino.casino_name}</h3>
-                                <p class="bonus-amount">${casino.deposit_bonus}</p>
-                                <p class="bonus-extra">${casino.free_spins || ''}</p>
+                            <div class="casino-main">
+                                <img src="${logoPath}" alt="${casino.casino_name}" class="casino-logo">
+                                <div class="casino-info">
+                                    <div class="casino-header">
+                                        <h3>${casino.casino_name}</h3>
+                                        <div class="stars">${displayStars(casino.rating)}</div>
+                                    </div>
+                                    <div class="casino-details">
+                                        <p>Bonus: ${casino.deposit_bonus}</p>
+                                        <p>Free Spins: ${casino.free_spins || ''}</p>
+                                        <div class="payment-methods">
+                                            <div class="payment-methods-header">Payment Methods</div>
+                                            <div class="payment-methods-icons">
+                                                ${paymentMethodsHtml}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="casino-actions">
+                                    <button class="edit-btn" onclick="editCasino(${JSON.stringify(casino).replace(/"/g, '&quot;')})">Edit</button>
+                                    <button class="delete-btn" onclick="deleteCasino(${casino.id})">Remove</button>
+                                </div>
                             </div>
                         </div>
                     `;
                     
-                    casinoList.appendChild(casinoElement);
+                    // Add drag and drop event listeners
+                    casinoElement.addEventListener('dragstart', handleDragStart);
+                    casinoElement.addEventListener('dragend', handleDragEnd);
+                    casinoElement.addEventListener('dragover', handleDragOver);
+                    casinoElement.addEventListener('drop', handleDrop);
+                    
+                    casinoContainer.appendChild(casinoElement);
                 });
-
-                setupDragAndDrop();
             } catch (error) {
                 console.error('Error loading casinos:', error);
             }
         }
 
-        function displayStars(rating) {
-            rating = parseFloat(rating); // Ensure rating is a number
-            const fullStars = Math.floor(rating);
-            const hasHalfStar = (rating % 1) >= 0.5;
-            const emptyStars = 5 - Math.ceil(rating);
-            
-            let html = '<div class="stars">';
-            
-            // Full stars
-            for (let i = 0; i < fullStars; i++) {
-                html += '<i class="fas fa-star"></i>';
+        function getOrderField(page) {
+            switch(page) {
+                case 'front': return 'order_front';
+                case 'all': return 'order_all';
+                case 'new': return 'order_new';
+                case 'pp': return 'order_pp';
+                default: return 'order_front';
             }
-            
-            // Half star
-            if (hasHalfStar) {
-                html += '<i class="fas fa-star-half-alt"></i>';
-            }
-            
-            // Empty stars
-            for (let i = 0; i < emptyStars; i++) {
-                html += '<i class="far fa-star"></i>';
-            }
-            
-            html += '</div>';
-            return html;
         }
+
+        let draggedElement = null;
+        let currentPage = 'front';
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            draggedElement = null;
+            this.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        async function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            
+            if (draggedElement === this) {
+                return;
+            }
+
+            const orderField = getOrderField(currentPage);
+            const data = {
+                draggedId: parseInt(draggedElement.dataset.id),
+                dropId: parseInt(this.dataset.id),
+                page: currentPage,
+                draggedOrderFront: parseInt(draggedElement.dataset.orderFront),
+                dropOrderFront: parseInt(this.dataset.orderFront),
+                draggedOrderAll: parseInt(draggedElement.dataset.orderAll),
+                dropOrderAll: parseInt(this.dataset.orderAll),
+                draggedOrderNew: parseInt(draggedElement.dataset.orderNew),
+                dropOrderNew: parseInt(this.dataset.orderNew),
+                draggedOrderPp: parseInt(draggedElement.dataset.orderPp),
+                dropOrderPp: parseInt(this.dataset.orderPp)
+            };
+
+            try {
+                const response = await fetch('/api/top-rated-casinos/reorder', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    await loadCasinos();
+                } else {
+                    console.error('Error reordering casinos:', await response.text());
+                }
+            } catch (error) {
+                console.error('Error reordering casinos:', error);
+            }
+
+            return false;
+        }
+
+        // Add tab click handlers
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                currentPage = this.dataset.page;
+            });
+        });
 
         // File upload preview
         function handleFileSelect(fileInput) {
@@ -1369,7 +1590,7 @@
                 const response = await fetch('/api/banners', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
                         casino_name: casinoName,
@@ -1410,71 +1631,107 @@
         }
 
         async function addTopRatedCasino() {
-            const casinoNameInput = document.getElementById('casinoName');
-            const depositBonusInput = document.getElementById('depositBonus');
-            const freeSpinsInput = document.getElementById('freeSpins');
-            const redirectUrlInput = document.getElementById('redirectUrl');
-            const ratingInput = document.getElementById('rating');
-            const featuresInput = document.getElementById('features');
-            const exclusiveInput = document.getElementById('isExclusive');
-            const logoInput = document.getElementById('casinoLogoFile');
+            const casinoName = document.getElementById('casinoName').value;
+            const depositBonus = document.getElementById('depositBonus').value;
+            const freeSpins = document.getElementById('freeSpins').value;
+            const redirectUrl = document.getElementById('redirectUrl').value;
+            const features = document.getElementById('features').value;
+            const isExclusive = document.getElementById('isExclusive').checked;
+            const logoFile = document.getElementById('casinoLogoFile').files[0];
+            
+            // Get selected payment methods
+            const selectedPaymentMethods = Array.from(document.querySelectorAll('input[name="payment_methods"]:checked')).map(cb => cb.value);
+            
+            // Check if more than 10 payment methods are selected
+            if (selectedPaymentMethods.length > 10) {
+                showAlert('Maximum 10 payment methods allowed', false);
+                return;
+            }
 
-            if (!casinoNameInput.value || !depositBonusInput.value || !redirectUrlInput.value || !logoInput.files[0]) {
+            if (!casinoName || !depositBonus || !redirectUrl || !features) {
                 showAlert('Please fill in all required fields', false);
                 return;
             }
 
-            const formData = new FormData();
-            formData.append('casino_name', casinoNameInput.value);
-            formData.append('deposit_bonus', depositBonusInput.value);
-            formData.append('free_spins', freeSpinsInput.value);
-            formData.append('redirect_url', redirectUrlInput.value);
-            formData.append('rating', ratingInput.value);
-            formData.append('features', featuresInput.value);
-            formData.append('is_exclusive', exclusiveInput.checked);
-            formData.append('logo', logoInput.files[0]);
-
-            try {
-                const response = await fetch('/api/top-rated-casinos', {
-                    method: 'POST',
-                    body: formData
-                });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Failed to add casino');
-                }
-
-                showAlert('Casino added successfully!', true);
-                resetForm('casino');
-                loadCasinos();
-            } catch (error) {
-                console.error('Error adding casino:', error);
-                showAlert(error.message, false);
+            if (!logoFile && !document.getElementById('editingCasinoId').value) {
+                showAlert('Please select a logo file', false);
+                return;
             }
+
+            const formData = new FormData();
+            formData.append('casino_name', casinoName);
+            formData.append('deposit_bonus', depositBonus);
+            formData.append('free_spins', freeSpins || '');
+            formData.append('redirect_url', redirectUrl);
+            formData.append('features', features);
+            formData.append('rating', currentRating);
+            formData.append('is_exclusive', isExclusive);
+            formData.append('payment_methods', JSON.stringify(selectedPaymentMethods));
+
+            if (logoFile) {
+                formData.append('logo', logoFile);
+            }
+
+            const editingId = document.getElementById('editingCasinoId').value;
+            const url = editingId ? `/api/top-rated-casinos/${editingId}` : '/api/top-rated-casinos';
+            const method = editingId ? 'PUT' : 'POST';
+
+            fetch(url, {
+                method: method,
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Casino ' + (editingId ? 'updated' : 'added') + ' successfully!', true);
+                    resetForm('casino');
+                    loadCasinos();
+                } else {
+                    showAlert('Error: ' + data.message, false);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('An error occurred while saving the casino', false);
+            });
         }
 
         // Delete casino with confirmation
         async function deleteCasino(id) {
-            if (!confirm('Are you sure you want to delete this casino?')) {
-                return;
-            }
-
+            if (!confirm('Are you sure you want to remove this casino from the current page?')) return;
+            
             try {
-                const response = await fetch(`/api/top-rated-casinos/${id}`, {
-                    method: 'DELETE'
-                });
-
-                if (!response.ok) {
-                    const result = await response.json();
-                    throw new Error(result.error || 'Failed to delete casino');
+                // Instead of deleting, we'll update the order for the current page to -1
+                const orderUpdate = {};
+                switch(currentPage) {
+                    case 'front':
+                        orderUpdate.order_front = -1;
+                        break;
+                    case 'all':
+                        orderUpdate.order_all = -1;
+                        break;
+                    case 'new':
+                        orderUpdate.order_new = -1;
+                        break;
+                    case 'pp':
+                        orderUpdate.order_pp = -1;
+                        break;
                 }
 
-                alert('Casino deleted successfully!');
-                loadCasinos();
+                const response = await fetch(`/api/top-rated-casinos/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderUpdate)
+                });
+                
+                if (response.ok) {
+                    // Reload casinos to show new order
+                    loadCasinos();
+                }
             } catch (error) {
-                console.error('Error:', error);
-                alert(error.message);
+                console.error('Error updating casino:', error);
             }
         }
 
@@ -1516,120 +1773,6 @@
             }, 3000);
         }
 
-        // Drag and Drop handlers
-        let draggedCard = null;
-
-        function handleDragStart(e) {
-            draggedCard = this;
-            this.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', this.dataset.id);
-        }
-
-        function handleDragEnd(e) {
-            draggedCard = null;
-            this.classList.remove('dragging');
-            document.querySelectorAll('.casino-item').forEach(card => {
-                card.classList.remove('drag-over');
-            });
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            if (this !== draggedCard) {
-                e.dataTransfer.dropEffect = 'move';
-            }
-            return false;
-        }
-
-        function handleDragEnter(e) {
-            e.preventDefault();
-            if (this !== draggedCard) {
-                this.classList.add('drag-over');
-            }
-        }
-
-        function handleDragLeave(e) {
-            e.preventDefault();
-            this.classList.remove('drag-over');
-        }
-
-        async function handleDrop(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const dropTarget = e.target.closest('.casino-item');
-            if (!dropTarget || !draggedCard || dropTarget === draggedCard) {
-                return;
-            }
-
-            dropTarget.classList.remove('drag-over');
-            
-            const draggedId = draggedCard.dataset.id;
-            const dropId = dropTarget.dataset.id;
-
-            // Get the order values for the current page
-            const getOrder = (element) => {
-                switch(currentPage) {
-                    case 'front': return parseInt(element.dataset.orderFront);
-                    case 'all': return parseInt(element.dataset.orderAll);
-                    case 'new': return parseInt(element.dataset.orderNew);
-                    case 'pp': return parseInt(element.dataset.orderPp);
-                    default: return parseInt(element.dataset.orderFront);
-                }
-            };
-
-            const draggedOrder = getOrder(draggedCard);
-            const dropOrder = getOrder(dropTarget);
-
-            try {
-                // Update the orders in the database
-                const response = await fetch('/api/top-rated-casinos/reorder', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        draggedId: parseInt(draggedId),
-                        dropId: parseInt(dropId),
-                        page: currentPage,
-                        draggedOrderFront: parseInt(draggedCard.dataset.orderFront),
-                        dropOrderFront: parseInt(dropTarget.dataset.orderFront),
-                        draggedOrderAll: parseInt(draggedCard.dataset.orderAll),
-                        dropOrderAll: parseInt(dropTarget.dataset.orderAll),
-                        draggedOrderNew: parseInt(draggedCard.dataset.orderNew),
-                        dropOrderNew: parseInt(dropTarget.dataset.orderNew),
-                        draggedOrderPp: parseInt(draggedCard.dataset.orderPp),
-                        dropOrderPp: parseInt(dropTarget.dataset.orderPp)
-                    })
-                });
-
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Failed to reorder casinos');
-                }
-
-                // Reload the casinos to show the new order
-                loadCasinos();
-            } catch (error) {
-                console.error('Error reordering casinos:', error);
-                showAlert(error.message, false);
-            }
-        }
-
-        function setupDragAndDrop() {
-            const casinoItems = document.querySelectorAll('.casino-item');
-            casinoItems.forEach(item => {
-                item.draggable = true;
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragend', handleDragEnd);
-                item.addEventListener('dragover', handleDragOver);
-                item.addEventListener('dragenter', handleDragEnter);
-                item.addEventListener('dragleave', handleDragLeave);
-                item.addEventListener('drop', handleDrop);
-            });
-        }
-        
         // Add setFocusedBanner function
         async function setFocusedBanner(id, page) {
             try {
@@ -1671,132 +1814,177 @@
             selectedBannerColor = button.dataset.color;
         }
 
+        // Function to edit casino
+        function editCasino(casino) {
+            // Fill form with casino data
+            document.getElementById('casinoName').value = casino.casino_name;
+            document.getElementById('depositBonus').value = casino.deposit_bonus;
+            document.getElementById('freeSpins').value = casino.free_spins;
+            document.getElementById('redirectUrl').value = casino.redirect_url;
+            document.getElementById('features').value = casino.features;
+            document.getElementById('isExclusive').checked = casino.is_exclusive;
+            document.getElementById('casinoLogoPreview').src = `/static-demo/pictures/${casino.logo_path}`;
+            document.getElementById('editingCasinoId').value = casino.id;
+            
+            // Update rating
+            currentRating = casino.rating;
+            document.querySelectorAll('.star').forEach((star, index) => {
+                star.classList.toggle('active', index < casino.rating);
+            });
+            
+            // Parse and set payment methods
+            let paymentMethods = [];
+            try {
+                if (casino.payment_methods) {
+                    paymentMethods = typeof casino.payment_methods === 'string' ? 
+                        JSON.parse(casino.payment_methods) : 
+                        casino.payment_methods;
+                }
+            } catch (e) {
+                console.error('Error parsing payment methods:', e);
+            }
+
+            // Reset all checkboxes first
+            document.querySelectorAll('input[name="payment_methods"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+            // Check the appropriate payment method checkboxes
+            paymentMethods.forEach(method => {
+                const checkbox = document.querySelector(`input[name="payment_methods"][value="${method}"]`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                }
+            });
+
+            // Show edit mode UI
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.textContent = 'Save Changes';
+            submitBtn.onclick = () => saveEditedCasino(casino.id);
+            
+            // Show cancel button
+            document.getElementById('cancelBtn').style.display = 'inline-block';
+            
+            // Scroll to form
+            document.querySelector('.add-form').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Function to cancel edit
+        function cancelEdit() {
+            // Clear form
+            document.getElementById('casinoName').value = '';
+            document.getElementById('depositBonus').value = '';
+            document.getElementById('freeSpins').value = '';
+            document.getElementById('redirectUrl').value = '';
+            document.getElementById('rating').value = '5';
+            document.getElementById('features').value = '';
+            document.getElementById('isExclusive').checked = false;
+            document.getElementById('casinoLogoPreview').src = '';
+            document.getElementById('editingCasinoId').value = '';
+            document.getElementById('casinoLogoFile').value = '';
+            
+            // Reset button
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.textContent = 'Add Casino';
+            submitBtn.onclick = addTopRatedCasino;
+            
+            // Hide cancel button
+            document.getElementById('cancelBtn').style.display = 'none';
+        }
+
+        // Function to save edited casino
+        async function saveEditedCasino(id) {
+            const casinoName = document.getElementById('casinoName').value;
+            const depositBonus = document.getElementById('depositBonus').value;
+            const freeSpins = document.getElementById('freeSpins').value;
+            const redirectUrl = document.getElementById('redirectUrl').value;
+            const features = document.getElementById('features').value;
+            const isExclusive = document.getElementById('isExclusive').checked;
+            const logoFile = document.getElementById('casinoLogoFile').files[0];
+            
+            // Get selected payment methods
+            const selectedPaymentMethods = Array.from(document.querySelectorAll('input[name="payment_methods"]:checked')).map(cb => cb.value);
+
+            const formData = new FormData();
+            formData.append('id', id);
+            formData.append('casino_name', casinoName);
+            formData.append('deposit_bonus', depositBonus);
+            formData.append('free_spins', freeSpins || '');
+            formData.append('redirect_url', redirectUrl);
+            formData.append('features', features);
+            formData.append('is_exclusive', isExclusive);
+            formData.append('rating', currentRating);
+            formData.append('payment_methods', JSON.stringify(selectedPaymentMethods));
+
+            if (logoFile) {
+                formData.append('logo', logoFile);
+            }
+
+            try {
+                const response = await fetch(`/api/top-rated-casinos/${id}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    showAlert('Casino updated successfully!', true);
+                    resetForm('casino');
+                    loadCasinos();
+                    cancelEdit();
+                } else {
+                    const error = await response.json();
+                    showAlert(error.error || 'Error updating casino', false);
+                }
+            } catch (error) {
+                console.error('Error updating casino:', error);
+                showAlert('Error updating casino', false);
+            }
+        }
+
+        // Function to add payment methods
+        function addPaymentMethods() {
+            const paymentMethods = document.getElementById('paymentMethods');
+            const paymentMethod = document.createElement('div');
+            paymentMethod.className = 'payment-method';
+            paymentMethod.innerHTML = `
+                <input type="checkbox" name="payment_methods" value="visa">
+                <label>Visa</label>
+            `;
+            paymentMethods.appendChild(paymentMethod);
+        }
+
         // Initialize functionality
         document.addEventListener('DOMContentLoaded', () => {
             loadBanners();
             loadCasinos();
         });
 
-        async function loadCasinos() {
-            try {
-                const response = await fetch('/api/top-rated-casinos');
-                const casinos = await response.json();
-                
-                // Sort casinos based on current page
-                const sortedCasinos = [...casinos].sort((a, b) => {
-                    switch(currentPage) {
-                        case 'front':
-                            return a.order_front - b.order_front;
-                        case 'all':
-                            return a.order_all - b.order_all;
-                        case 'new':
-                            return a.order_new - b.order_new;
-                        case 'pp':
-                            return a.order_pp - b.order_pp;
-                        default:
-                            return a.order_front - b.order_front;
-                    }
-                });
-
-                const casinoList = document.getElementById('casinoList');
-                casinoList.innerHTML = '';
-                
-                sortedCasinos.forEach(casino => {
-                    const casinoElement = document.createElement('div');
-                    casinoElement.className = 'casino-item';
-                    casinoElement.draggable = true;
-                    casinoElement.dataset.id = casino.id;
-                    casinoElement.dataset.orderFront = casino.order_front;
-                    casinoElement.dataset.orderAll = casino.order_all;
-                    casinoElement.dataset.orderNew = casino.order_new;
-                    casinoElement.dataset.orderPp = casino.order_pp;
-                    
-                    casinoElement.innerHTML = `
-                        <div class="casino-content">
-                            <img src="/static-demo/pictures/${casino.logo_path}" alt="${casino.casino_name}" class="casino-logo">
-                            <div class="casino-details">
-                                <h3>${casino.casino_name}</h3>
-                                <p class="bonus-amount">${casino.deposit_bonus}</p>
-                                <p class="bonus-extra">${casino.free_spins || ''}</p>
-                            </div>
-                        </div>
-                    `;
-                    
-                    casinoList.appendChild(casinoElement);
-                });
-
-                setupDragAndDrop();
-            } catch (error) {
-                console.error('Error loading casinos:', error);
+        function displayStars(rating) {
+            rating = parseFloat(rating); // Ensure rating is a number
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = (rating % 1) >= 0.5;
+            const emptyStars = 5 - Math.ceil(rating);
+            
+            let html = '<div class="stars">';
+            
+            // Full stars
+            for (let i = 0; i < fullStars; i++) {
+                html += '<i class="fas fa-star"></i>';
             }
-        }
-
-        function handleDragStart(e) {
-            e.dataTransfer.setData('text/plain', e.target.closest('.casino-item').dataset.id);
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-        }
-
-        async function handleDrop(e) {
-            e.preventDefault();
             
-            const draggedId = e.dataTransfer.getData('text/plain');
-            const dropId = e.target.closest('.casino-item').dataset.id;
-            
-            if (draggedId === dropId) return;
-            
-            const draggedElement = document.querySelector(`[data-id="${draggedId}"]`);
-            const dropElement = document.querySelector(`[data-id="${dropId}"]`);
-            
-            // Get current orders based on page
-            const getOrder = (element) => {
-                switch(currentPage) {
-                    case 'front': return parseInt(element.dataset.orderFront);
-                    case 'all': return parseInt(element.dataset.orderAll);
-                    case 'new': return parseInt(element.dataset.orderNew);
-                    case 'pp': return parseInt(element.dataset.orderPp);
-                    default: return parseInt(element.dataset.orderFront);
-                }
-            };
-
-            const draggedOrder = getOrder(draggedElement);
-            const dropOrder = getOrder(dropElement);
-
-            try {
-                // Update the orders in the database
-                const response = await fetch('/api/top-rated-casinos/reorder', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        draggedId: parseInt(draggedId),
-                        dropId: parseInt(dropId),
-                        page: currentPage,
-                        draggedOrderFront: parseInt(draggedElement.dataset.orderFront),
-                        dropOrderFront: parseInt(dropElement.dataset.orderFront),
-                        draggedOrderAll: parseInt(draggedElement.dataset.orderAll),
-                        dropOrderAll: parseInt(dropElement.dataset.orderAll),
-                        draggedOrderNew: parseInt(draggedElement.dataset.orderNew),
-                        dropOrderNew: parseInt(dropElement.dataset.orderNew),
-                        draggedOrderPp: parseInt(draggedElement.dataset.orderPp),
-                        dropOrderPp: parseInt(dropElement.dataset.orderPp)
-                    })
-                });
-
-                if (response.ok) {
-                    // Reload casinos to show new order
-                    loadCasinos();
-                }
-            } catch (error) {
-                console.error('Error updating casino order:', error);
+            // Half star
+            if (hasHalfStar) {
+                html += '<i class="fas fa-star-half-alt"></i>';
             }
+            
+            // Empty stars
+            for (let i = 0; i < emptyStars; i++) {
+                html += '<i class="far fa-star"></i>';
+            }
+            
+            html += '</div>';
+            return html;
         }
-
-        // Initial load
-        loadCasinos();
     </script>
 </body>
 </html>

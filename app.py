@@ -85,6 +85,7 @@ class TopRatedCasino(db.Model):
     order_pp = db.Column(db.Integer, nullable=False, default=0)     # Order on top P&P
     redirect_url = db.Column(db.String(500), nullable=False)
     is_exclusive = db.Column(db.Boolean, default=False)
+    payment_methods = db.Column(db.Text)  # Store as JSON string
 
 # Create database tables
 with app.app_context():
@@ -298,7 +299,25 @@ def delete_banner(id):
 @app.route('/api/top-rated-casinos', methods=['GET'])
 def get_top_rated_casinos():
     try:
-        casinos = TopRatedCasino.query.all()
+        # Get the current page from query parameters
+        page = request.args.get('page', 'front')
+        
+        # Map page to order field
+        order_field_map = {
+            'front': TopRatedCasino.order_front,
+            'all': TopRatedCasino.order_all,
+            'new': TopRatedCasino.order_new,
+            'pp': TopRatedCasino.order_pp
+        }
+        
+        if page not in order_field_map:
+            return jsonify({'error': 'Invalid page specified'}), 400
+            
+        order_field = order_field_map[page]
+        
+        # Get casinos where order is not -1 for the current page
+        casinos = TopRatedCasino.query.filter(order_field > -1).order_by(order_field).all()
+        
         return jsonify([{
             'id': c.id,
             'casino_name': c.casino_name,
@@ -312,7 +331,8 @@ def get_top_rated_casinos():
             'order_front': c.order_front,
             'order_all': c.order_all,
             'order_new': c.order_new,
-            'order_pp': c.order_pp
+            'order_pp': c.order_pp,
+            'payment_methods': c.payment_methods
         } for c in casinos])
     except Exception as e:
         logging.error(f"Error getting casinos: {str(e)}")
@@ -346,6 +366,7 @@ def add_top_rated_casino():
         rating = request.form.get('rating')
         features = request.form.get('features', '')
         is_exclusive = request.form.get('is_exclusive') == 'true'
+        payment_methods = request.form.get('payment_methods')
 
         # Validate required fields
         if not all([casino_name, deposit_bonus, free_spins, redirect_url, rating]):
@@ -367,7 +388,7 @@ def add_top_rated_casino():
         # Create new casino
         casino = TopRatedCasino(
             casino_name=casino_name,
-            logo_path=filename,  # Store just the filename
+            logo_path=filename,
             deposit_bonus=deposit_bonus,
             free_spins=free_spins,
             redirect_url=redirect_url,
@@ -377,7 +398,8 @@ def add_top_rated_casino():
             order_front=highest_order_front + 1,
             order_all=highest_order_all + 1,
             order_new=highest_order_new + 1,
-            order_pp=highest_order_pp + 1
+            order_pp=highest_order_pp + 1,
+            payment_methods=payment_methods
         )
 
         db.session.add(casino)
@@ -398,7 +420,8 @@ def add_top_rated_casino():
                 'order_front': casino.order_front,
                 'order_all': casino.order_all,
                 'order_new': casino.order_new,
-                'order_pp': casino.order_pp
+                'order_pp': casino.order_pp,
+                'payment_methods': casino.payment_methods
             }
         })
 
@@ -412,28 +435,51 @@ def add_top_rated_casino():
 def update_top_rated_casino(id):
     try:
         casino = TopRatedCasino.query.get_or_404(id)
-        data = request.json
-        casino.casino_name = data['casino_name']
-        casino.logo_path = data['logo_path']
-        try:
-            rating = float(data['rating'])
-            # Validate rating range
-            if not (0.5 <= rating <= 5.0):
-                return jsonify({'error': 'Rating must be between 0.5 and 5.0'}), 400
-            # Round to nearest 0.5
-            rating = round(rating * 2) / 2
-        except (ValueError, TypeError):
-            return jsonify({'error': 'Invalid rating value'}), 400
-        casino.rating = rating
-        casino.deposit_bonus = data['deposit_bonus']
-        casino.free_spins = data.get('free_spins', '')
-        casino.features = ','.join(data['features'])
-        casino.is_exclusive = data.get('is_exclusive', False)
-        casino.redirect_url = data.get('redirect_url', '#')
-        casino.order_front = data.get('order_front', casino.order_front)
-        casino.order_all = data.get('order_all', casino.order_all)
-        casino.order_new = data.get('order_new', casino.order_new)
-        casino.order_pp = data.get('order_pp', casino.order_pp)
+        
+        # Handle form data
+        if request.content_type and 'multipart/form-data' in request.content_type:
+            # Handle file upload if present
+            if 'logo' in request.files:
+                logo = request.files['logo']
+                if logo and allowed_file(logo.filename):
+                    filename = secure_filename(logo.filename)
+                    logo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    casino.logo_path = filename
+
+            # Handle form data
+            casino.casino_name = request.form.get('casino_name', casino.casino_name)
+            casino.deposit_bonus = request.form.get('deposit_bonus', casino.deposit_bonus)
+            casino.free_spins = request.form.get('free_spins', casino.free_spins)
+            casino.redirect_url = request.form.get('redirect_url', casino.redirect_url)
+            casino.features = request.form.get('features', casino.features)
+            casino.is_exclusive = request.form.get('is_exclusive', 'false').lower() == 'true'
+            casino.payment_methods = request.form.get('payment_methods', casino.payment_methods)
+            
+            # Handle rating
+            if 'rating' in request.form:
+                try:
+                    rating = float(request.form['rating'])
+                    if not (0.5 <= rating <= 5.0):
+                        return jsonify({'error': 'Rating must be between 0.5 and 5.0'}), 400
+                    rating = round(rating * 2) / 2
+                    casino.rating = rating
+                except (ValueError, TypeError):
+                    return jsonify({'error': 'Invalid rating value'}), 400
+
+        # Handle JSON data
+        elif request.is_json:
+            data = request.json
+            
+            # Handle order updates
+            if 'order_front' in data:
+                casino.order_front = data['order_front']
+            if 'order_all' in data:
+                casino.order_all = data['order_all']
+            if 'order_new' in data:
+                casino.order_new = data['order_new']
+            if 'order_pp' in data:
+                casino.order_pp = data['order_pp']
+
         db.session.commit()
         return jsonify({'message': 'Casino updated successfully'})
     except Exception as e:
@@ -461,50 +507,59 @@ def reorder_casinos():
         
         dragged_id = data['draggedId']
         drop_id = data['dropId']
-        page = data['page']  # Get the current page
+        page = data['page']
         
-        # Get the dragged casino
-        dragged_casino = TopRatedCasino.query.get(dragged_id)
-        if not dragged_casino:
-            return jsonify({'error': 'Dragged casino not found'}), 404
-            
-        # Get the drop casino
-        drop_casino = TopRatedCasino.query.get(drop_id)
-        if not drop_casino:
-            return jsonify({'error': 'Drop casino not found'}), 404
-            
-        # Map page to order field and data keys
+        # Map page to order field
         order_field_map = {
-            'front': ('order_front', 'draggedOrderFront', 'dropOrderFront'),
-            'all': ('order_all', 'draggedOrderAll', 'dropOrderAll'),
-            'new': ('order_new', 'draggedOrderNew', 'dropOrderNew'),
-            'pp': ('order_pp', 'draggedOrderPp', 'dropOrderPp')
+            'front': 'order_front',
+            'all': 'order_all',
+            'new': 'order_new',
+            'pp': 'order_pp'
         }
         
         if page not in order_field_map:
             return jsonify({'error': 'Invalid page specified'}), 400
             
-        order_field, dragged_key, drop_key = order_field_map[page]
-        dragged_order = data[dragged_key]
-        drop_order = data[drop_key]
+        order_field = order_field_map[page]
         
-        # Get all casinos ordered by the current field
-        casinos = TopRatedCasino.query.order_by(getattr(TopRatedCasino, order_field)).all()
+        # Get all visible casinos ordered by the current field
+        casinos = TopRatedCasino.query.filter(getattr(TopRatedCasino, order_field) > -1).order_by(getattr(TopRatedCasino, order_field)).all()
         
-        if dragged_order < drop_order:
-            # Moving down - update orders between dragged and drop positions
-            for casino in casinos:
-                if casino.id == dragged_id:
-                    setattr(casino, order_field, drop_order)
-                elif dragged_order < getattr(casino, order_field) <= drop_order:
-                    setattr(casino, order_field, getattr(casino, order_field) - 1)
-        else:
-            # Moving up - update orders between drop and dragged positions
-            for casino in casinos:
-                if casino.id == dragged_id:
-                    setattr(casino, order_field, drop_order)
-                elif drop_order <= getattr(casino, order_field) < dragged_order:
-                    setattr(casino, order_field, getattr(casino, order_field) + 1)
+        # First fix any duplicate orders by reassigning sequential numbers
+        for i, casino in enumerate(casinos, 1):
+            setattr(casino, order_field, i * 10)  # Use multiples of 10 to leave room for insertions
+        db.session.commit()
+        
+        # Refresh casino list after fixing orders
+        casinos = TopRatedCasino.query.filter(getattr(TopRatedCasino, order_field) > -1).order_by(getattr(TopRatedCasino, order_field)).all()
+        
+        # Find the dragged and drop casinos
+        dragged_casino = TopRatedCasino.query.get(dragged_id)
+        drop_casino = TopRatedCasino.query.get(drop_id)
+        
+        if not dragged_casino or not drop_casino:
+            return jsonify({'error': 'Casino not found'}), 404
+            
+        # Get current orders
+        dragged_order = getattr(dragged_casino, order_field)
+        drop_order = getattr(drop_casino, order_field)
+        
+        # Calculate new order value for dragged casino
+        if dragged_order < drop_order:  # Moving down
+            # Place it after the drop target
+            new_order = drop_order + 5
+        else:  # Moving up
+            # Place it before the drop target
+            new_order = drop_order - 5
+        
+        # Set the new order
+        setattr(dragged_casino, order_field, new_order)
+        db.session.commit()
+        
+        # Normalize all orders to be sequential again
+        casinos = TopRatedCasino.query.filter(getattr(TopRatedCasino, order_field) > -1).order_by(getattr(TopRatedCasino, order_field)).all()
+        for i, casino in enumerate(casinos, 1):
+            setattr(casino, order_field, i * 10)
         
         db.session.commit()
         logging.info("Casino order updated successfully")

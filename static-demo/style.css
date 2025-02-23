@@ -470,13 +470,55 @@ body {
     min-width: 0;
 }
 
+.payment-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-left: auto;
+    margin-right: 60px;
+    min-width: 240px;
+    text-align: center;
+}
+
+.payment-methods-header {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    text-align: center;
+    width: 100%;
+}
+
+.payment-methods-icons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.payment-methods img {
+    height: 20px;
+    width: auto;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+.payment-methods img:hover {
+    filter: grayscale(0%);
+    opacity: 1;
+}
+
 .play-btn {
     background: #4CAF50;
     color: white;
+    font-weight: 600;
     text-decoration: none;
     padding: 8px 20px;
     border-radius: 20px;
     font-weight: 600;
+    background-color: #4CAF50;
     font-size: 13px;
     transition: background-color 0.2s;
     white-space: nowrap;
@@ -565,6 +607,57 @@ body {
     font-size: 11px;
     font-weight: 600;
     text-transform: uppercase;
+}
+
+/* Admin Panel Casino Card Styles */
+.casino-card {
+    cursor: move;
+    transition: box-shadow 0.2s, transform 0.2s;
+    background: white;
+    margin-bottom: 15px;
+}
+
+.casino-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.casino-card .casino-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.casino-card .edit-btn,
+.casino-card .delete-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.casino-card .edit-btn {
+    background: #2196F3;
+    color: white;
+}
+
+.casino-card .edit-btn:hover {
+    background: #1976D2;
+}
+
+.casino-card .delete-btn {
+    background: #f44336;
+    color: white;
+}
+
+.casino-card .delete-btn:hover {
+    background: #d32f2f;
+}
+
+.casino-card.dragging {
+    opacity: 0.5;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 /* Giveaway Page Styles */
