@@ -64,9 +64,11 @@ class Banner(db.Model):
     logo_path = db.Column(db.String(200), nullable=False)
     bonus_amount = db.Column(db.String(100), nullable=False)
     bonus_extra = db.Column(db.String(100), nullable=False)
-    is_focused = db.Column(db.Boolean, default=False)
+    is_focused = db.Column(db.Boolean, default=False)  # For all-casinos page
+    is_focused_new = db.Column(db.Boolean, default=False)  # For new-casinos page
+    is_focused_pp = db.Column(db.Boolean, default=False)  # For top-pp page
     order = db.Column(db.Integer, nullable=False)
-    background_color = db.Column(db.String(500), nullable=False, default='#1a1a1a')  # Increased max length to 500
+    background_color = db.Column(db.String(500), nullable=False, default='#1a1a1a')
     redirect_url = db.Column(db.String(500), nullable=False, default='#')
 
 class TopRatedCasino(db.Model):
@@ -77,7 +79,10 @@ class TopRatedCasino(db.Model):
     deposit_bonus = db.Column(db.String(100), nullable=False)
     free_spins = db.Column(db.String(100))  # Made nullable
     features = db.Column(db.Text, nullable=False)
-    order = db.Column(db.Integer, nullable=False)
+    order_front = db.Column(db.Integer, nullable=False, default=0)  # Order on front page
+    order_all = db.Column(db.Integer, nullable=False, default=0)    # Order on all casinos
+    order_new = db.Column(db.Integer, nullable=False, default=0)    # Order on new casinos
+    order_pp = db.Column(db.Integer, nullable=False, default=0)     # Order on top P&P
     redirect_url = db.Column(db.String(500), nullable=False)
     is_exclusive = db.Column(db.Boolean, default=False)
 
@@ -102,14 +107,46 @@ def load_user(user_id):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def banner_to_dict(b):
+    return {
+        'id': b.id,
+        'casino_name': b.casino_name,
+        'logo_path': b.logo_path,
+        'bonus_amount': b.bonus_amount,
+        'bonus_extra': b.bonus_extra,
+        'is_focused': b.is_focused,
+        'is_focused_new': b.is_focused_new,
+        'is_focused_pp': b.is_focused_pp,
+        'order': b.order,
+        'background_color': b.background_color,
+        'redirect_url': b.redirect_url
+    }
+
 @app.route('/')
+@app.route('/index.html')
 def index():
     return send_from_directory('static-demo', 'index.html')
 
 @app.route('/giveaway')
+@app.route('/giveaway.html')
 def giveaway():
     logging.info("Serving giveaway.html from static-demo")
     return send_from_directory('static-demo', 'giveaway.html')
+
+@app.route('/all-casinos')
+@app.route('/all-casinos.html')
+def all_casinos_page():
+    return send_from_directory('static-demo', 'all-casinos.html')
+
+@app.route('/new-casinos')
+@app.route('/new-casinos.html')
+def new_casinos_page():
+    return send_from_directory('static-demo', 'new-casinos.html')
+
+@app.route('/top-pp')
+@app.route('/top-pp.html')
+def top_pp_page():
+    return send_from_directory('static-demo', 'top-pp.html')
 
 @app.route('/pictures/<path:filename>')
 def serve_pictures(filename):
@@ -164,17 +201,7 @@ def admin_panel():
 @app.route('/api/banners', methods=['GET'])
 def get_banners():
     banners = Banner.query.order_by(Banner.order).all()
-    return jsonify([{
-        'id': b.id,
-        'casino_name': b.casino_name,
-        'logo_path': b.logo_path,
-        'bonus_amount': b.bonus_amount,
-        'bonus_extra': b.bonus_extra,
-        'is_focused': b.is_focused,
-        'order': b.order,
-        'background_color': b.background_color,
-        'redirect_url': b.redirect_url
-    } for b in banners])
+    return jsonify([banner_to_dict(b) for b in banners])
 
 @app.route('/api/banners', methods=['POST'])
 @login_required
@@ -225,24 +252,39 @@ def add_banner():
 @app.route('/api/banners/<int:id>', methods=['PUT'])
 @login_required
 def update_banner(id):
-    banner = Banner.query.get_or_404(id)
-    data = request.json
-    
-    if data['is_focused'] == 'true' and not banner.is_focused:
-        Banner.query.update({Banner.is_focused: False})
-    
-    banner.casino_name = data['casino_name']
-    banner.logo_path = data['logo_path']
-    banner.bonus_amount = data['bonus_amount']
-    banner.bonus_extra = data['bonus_extra']
-    banner.is_focused = data['is_focused'] == 'true'
-    banner.order = data['order']
-    banner.background_color = data.get('background_color', '#1a1a1a')
-    banner.redirect_url = data.get('redirect_url', '#')
-    
-    db.session.commit()
-    logging.info('Banner updated successfully')
-    return jsonify({'message': 'Banner updated successfully'})
+    try:
+        banner = Banner.query.get_or_404(id)
+        data = request.get_json()
+
+        # If setting this banner as focused for any page, unfocus all other banners for that page
+        if data.get('is_focused') == 'true':
+            Banner.query.filter(Banner.id != id).update({'is_focused': False})
+        if data.get('is_focused_new') == 'true':
+            Banner.query.filter(Banner.id != id).update({'is_focused_new': False})
+        if data.get('is_focused_pp') == 'true':
+            Banner.query.filter(Banner.id != id).update({'is_focused_pp': False})
+
+        # Update banner fields
+        if 'is_focused' in data:
+            banner.is_focused = data['is_focused'] == 'true'
+        if 'is_focused_new' in data:
+            banner.is_focused_new = data['is_focused_new'] == 'true'
+        if 'is_focused_pp' in data:
+            banner.is_focused_pp = data['is_focused_pp'] == 'true'
+
+        banner.casino_name = data.get('casino_name', banner.casino_name)
+        banner.logo_path = data.get('logo_path', banner.logo_path)
+        banner.bonus_amount = data.get('bonus_amount', banner.bonus_amount)
+        banner.bonus_extra = data.get('bonus_extra', banner.bonus_extra)
+        banner.order = data.get('order', banner.order)
+        banner.background_color = data.get('background_color', banner.background_color)
+        banner.redirect_url = data.get('redirect_url', banner.redirect_url)
+
+        db.session.commit()
+        return jsonify({'message': 'Banner updated successfully'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/banners/<int:id>', methods=['DELETE'])
 @login_required
@@ -255,11 +297,8 @@ def delete_banner(id):
 
 @app.route('/api/top-rated-casinos', methods=['GET'])
 def get_top_rated_casinos():
-    if not current_user.is_authenticated:
-        return jsonify({'error': 'Unauthorized'}), 401
-        
     try:
-        casinos = TopRatedCasino.query.order_by(TopRatedCasino.order).all()
+        casinos = TopRatedCasino.query.all()
         return jsonify([{
             'id': c.id,
             'casino_name': c.casino_name,
@@ -270,7 +309,10 @@ def get_top_rated_casinos():
             'rating': c.rating,
             'features': c.features,
             'is_exclusive': c.is_exclusive,
-            'order': c.order
+            'order_front': c.order_front,
+            'order_all': c.order_all,
+            'order_new': c.order_new,
+            'order_pp': c.order_pp
         } for c in casinos])
     except Exception as e:
         logging.error(f"Error getting casinos: {str(e)}")
@@ -317,7 +359,10 @@ def add_top_rated_casino():
             return jsonify({'error': 'Invalid rating value'}), 400
 
         # Get highest order
-        highest_order = db.session.query(db.func.max(TopRatedCasino.order)).scalar() or 0
+        highest_order_front = db.session.query(db.func.max(TopRatedCasino.order_front)).scalar() or 0
+        highest_order_all = db.session.query(db.func.max(TopRatedCasino.order_all)).scalar() or 0
+        highest_order_new = db.session.query(db.func.max(TopRatedCasino.order_new)).scalar() or 0
+        highest_order_pp = db.session.query(db.func.max(TopRatedCasino.order_pp)).scalar() or 0
 
         # Create new casino
         casino = TopRatedCasino(
@@ -329,7 +374,10 @@ def add_top_rated_casino():
             rating=rating,
             features=features,
             is_exclusive=is_exclusive,
-            order=highest_order + 1
+            order_front=highest_order_front + 1,
+            order_all=highest_order_all + 1,
+            order_new=highest_order_new + 1,
+            order_pp=highest_order_pp + 1
         )
 
         db.session.add(casino)
@@ -347,7 +395,10 @@ def add_top_rated_casino():
                 'rating': casino.rating,
                 'features': casino.features,
                 'is_exclusive': casino.is_exclusive,
-                'order': casino.order
+                'order_front': casino.order_front,
+                'order_all': casino.order_all,
+                'order_new': casino.order_new,
+                'order_pp': casino.order_pp
             }
         })
 
@@ -379,6 +430,10 @@ def update_top_rated_casino(id):
         casino.features = ','.join(data['features'])
         casino.is_exclusive = data.get('is_exclusive', False)
         casino.redirect_url = data.get('redirect_url', '#')
+        casino.order_front = data.get('order_front', casino.order_front)
+        casino.order_all = data.get('order_all', casino.order_all)
+        casino.order_new = data.get('order_new', casino.order_new)
+        casino.order_pp = data.get('order_pp', casino.order_pp)
         db.session.commit()
         return jsonify({'message': 'Casino updated successfully'})
     except Exception as e:
@@ -406,27 +461,50 @@ def reorder_casinos():
         
         dragged_id = data['draggedId']
         drop_id = data['dropId']
-        dragged_order = data['draggedOrder']
-        drop_order = data['dropOrder']
+        page = data['page']  # Get the current page
         
-        # Get all casinos
-        casinos = TopRatedCasino.query.all()
+        # Get the dragged casino
+        dragged_casino = TopRatedCasino.query.get(dragged_id)
+        if not dragged_casino:
+            return jsonify({'error': 'Dragged casino not found'}), 404
+            
+        # Get the drop casino
+        drop_casino = TopRatedCasino.query.get(drop_id)
+        if not drop_casino:
+            return jsonify({'error': 'Drop casino not found'}), 404
+            
+        # Map page to order field and data keys
+        order_field_map = {
+            'front': ('order_front', 'draggedOrderFront', 'dropOrderFront'),
+            'all': ('order_all', 'draggedOrderAll', 'dropOrderAll'),
+            'new': ('order_new', 'draggedOrderNew', 'dropOrderNew'),
+            'pp': ('order_pp', 'draggedOrderPp', 'dropOrderPp')
+        }
         
-        # Update orders
+        if page not in order_field_map:
+            return jsonify({'error': 'Invalid page specified'}), 400
+            
+        order_field, dragged_key, drop_key = order_field_map[page]
+        dragged_order = data[dragged_key]
+        drop_order = data[drop_key]
+        
+        # Get all casinos ordered by the current field
+        casinos = TopRatedCasino.query.order_by(getattr(TopRatedCasino, order_field)).all()
+        
         if dragged_order < drop_order:
             # Moving down - update orders between dragged and drop positions
             for casino in casinos:
                 if casino.id == dragged_id:
-                    casino.order = drop_order
-                elif dragged_order < casino.order <= drop_order:
-                    casino.order -= 1
+                    setattr(casino, order_field, drop_order)
+                elif dragged_order < getattr(casino, order_field) <= drop_order:
+                    setattr(casino, order_field, getattr(casino, order_field) - 1)
         else:
             # Moving up - update orders between drop and dragged positions
             for casino in casinos:
                 if casino.id == dragged_id:
-                    casino.order = drop_order
-                elif drop_order <= casino.order < dragged_order:
-                    casino.order += 1
+                    setattr(casino, order_field, drop_order)
+                elif drop_order <= getattr(casino, order_field) < dragged_order:
+                    setattr(casino, order_field, getattr(casino, order_field) + 1)
         
         db.session.commit()
         logging.info("Casino order updated successfully")

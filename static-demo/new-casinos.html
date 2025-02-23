@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Casinos - ysivitonen95</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="main-nav">
+            <div class="nav-left">
+                <a href="/" class="logo">ysivitonen95</a>
+            </div>
+            <div class="nav-right">
+                <a href="/all-casinos" class="nav-link">All Casinos</a>
+                <a href="/new-casinos" class="nav-link active">New Casinos</a>
+                <a href="/top-pp" class="nav-link">Top P&amp;P</a>
+                <a href="giveaway.html" class="nav-link">Giveaway</a>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero-section single-banner">
+        <h2 class="page-title">NEW CASINOS</h2>
+        <div class="featured-single">
+            <div id="featured-casino">
+                <!-- Single featured casino will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <main class="site-main">
+        <section class="casino-section">
+            <div class="casino-grid" id="new-casinos-container">
+                <!-- New casinos will be loaded here -->
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Function to display star rating
+        function displayStars(rating) {
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    starsHtml += '<i class="fas fa-star"></i>';
+                } else if (i - 0.5 <= rating) {
+                    starsHtml += '<i class="fas fa-star-half-alt"></i>';
+                } else {
+                    starsHtml += '<i class="far fa-star"></i>';
+                }
+            }
+            return starsHtml;
+        }
+
+        // Load featured casino
+        async function loadFeaturedCasino() {
+            try {
+                const response = await fetch('/api/banners');
+                const banners = await response.json();
+                
+                // Find the focused banner for new casinos
+                const focusedBanner = banners.find(banner => banner.is_focused_new);
+                
+                if (focusedBanner) {
+                    const featuredHtml = `
+                        <div class="featured-casino" style="background-color: ${focusedBanner.background_color || '#1a1a1a'}">
+                            <img src="${focusedBanner.logo_path}" alt="${focusedBanner.casino_name}" class="casino-logo">
+                            <div class="casino-info">
+                                <div class="bonus-info">
+                                    <p class="bonus-amount">${focusedBanner.bonus_amount}</p>
+                                    <p class="bonus-extra">${focusedBanner.bonus_extra}</p>
+                                </div>
+                                <a href="${focusedBanner.redirect_url}" class="play-btn">PLAY NOW</a>
+                            </div>
+                        </div>
+                    `;
+                    document.getElementById('featured-casino').innerHTML = featuredHtml;
+                } else {
+                    document.getElementById('featured-casino').innerHTML = `
+                        <div class="no-featured-casino">
+                            <p>No featured casino selected</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading featured casino:', error);
+            }
+        }
+
+        // Load new casinos
+        async function loadNewCasinos() {
+            try {
+                const response = await fetch('/api/top-rated-casinos');
+                const casinos = await response.json();
+                const container = document.getElementById('new-casinos-container');
+                
+                casinos.sort((a, b) => a.order_new - b.order_new);
+                container.innerHTML = casinos.map(casino => {
+                    // Split features by newlines and create list items
+                    const featuresList = casino.features
+                        .split('\n')
+                        .filter(feature => feature.trim().length > 0)
+                        .map(feature => `<div class="feature">${feature.trim()}</div>`)
+                        .join('');
+
+                    return `
+                        <div class="casino-card">
+                            ${casino.is_exclusive ? '<div class="exclusive-tag">EXCLUSIVE</div>' : ''}
+                            <div class="casino-left">
+                                <div class="casino-logo">
+                                    <img src="/static-demo/pictures/${casino.logo_path}" alt="${casino.casino_name}">
+                                </div>
+                                <div class="casino-info">
+                                    <h3 class="casino-name">${casino.casino_name}</h3>
+                                    <div class="stars">${displayStars(casino.rating)}</div>
+                                </div>
+                            </div>
+                            <div class="casino-middle">
+                                <div class="deposit-bonus">
+                                    <div class="label">DEPOSIT BONUS</div>
+                                    <div class="amount">${casino.deposit_bonus}</div>
+                                    <div class="extra">${casino.free_spins}</div>
+                                </div>
+                                <div class="casino-features">
+                                    ${featuresList}
+                                </div>
+                            </div>
+                            <a href="${casino.redirect_url}" class="play-btn">PLAY NOW</a>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading casinos:', error);
+            }
+        }
+
+        // Load content when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFeaturedCasino();
+            loadNewCasinos();
+        });
+    </script>
+</body>
+</html>

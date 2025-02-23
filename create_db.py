@@ -41,7 +41,10 @@ def init_db():
                     deposit_bonus='200% up to €500',
                     free_spins='+ 100 Free Spins',
                     features='Fast withdrawals (Pay n Play),Big welcome bonuses,User-friendly Game lobby',
-                    order=1,
+                    order_front=1,
+                    order_all=2,
+                    order_new=3,
+                    order_pp=1,
                     redirect_url='https://example.com/spinz',
                     is_exclusive=True
                 ),
@@ -52,8 +55,11 @@ def init_db():
                     deposit_bonus='100% up to €300',
                     free_spins='+ 150 Free Spins',
                     features='Big welcome bonus,Alot of providers,Fast withdraws',
-                    order=2,
-                    redirect_url='https://example.com/vice',  # Added redirect URL
+                    order_front=2,
+                    order_all=1,
+                    order_new=1,
+                    order_pp=2,
+                    redirect_url='https://example.com/vice',
                     is_exclusive=False
                 )
             ]
