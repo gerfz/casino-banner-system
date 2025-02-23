@@ -1181,6 +1181,10 @@
                     </div>
 
                     <div class="form-group">
+                        <div class="checkbox-group" style="margin-bottom: 15px;">
+                            <input type="checkbox" id="dummyDataCheckbox" onchange="fillDummyData(this.checked)">
+                            <label for="dummyDataCheckbox">Fill Demo Data</label>
+                        </div>
                         <input type="text" id="casinoName" placeholder="Casino Name" class="form-input">
                         <input type="text" id="depositBonus" placeholder="Header Text (eg. 300% up to €1500)" class="form-input">
                         <input type="text" id="freeSpins" placeholder="Subtext (eg. +150 Free Spins)" class="form-input">
@@ -2093,6 +2097,24 @@
             checkboxes.forEach(checkbox => {
                 checkbox.checked = true;
             });
+        }
+
+        function fillDummyData(checked) {
+            if (checked) {
+                // Fill the form fields with dummy data
+                document.getElementById('depositBonus').value = '300% up to 1500€';
+                document.getElementById('freeSpins').value = '+150 Free Spins';
+                document.getElementById('redirectUrl').value = 'https://ysivitonen95.com/';
+                document.getElementById('features').value = 'Fast Withdrawals\nLive Support\nHigh RTP';
+                
+                // Select all payment methods
+                document.querySelectorAll('input[name="payment_methods"]').forEach(checkbox => {
+                    checkbox.checked = true;
+                });
+            } else {
+                // Clear the form
+                resetForm('casino');
+            }
         }
     </script>
 </body>
