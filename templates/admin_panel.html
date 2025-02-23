@@ -1123,17 +1123,15 @@
         <section class="management-section">
             <h2>Banner Management</h2>
             
-            <div class="add-form">
-                <h3>Add New Banner</h3>
+            <div id="bannerForm" class="add-form">
+                <h3 id="bannerFormTitle">Add New Banner</h3>
                 <div class="form-grid">
                     <div class="form-group logo-section">
                         <div class="logo-preview">
-                            <img id="bannerLogoPreview" alt="Logo preview">
+                            <img id="bannerLogoPreview" src="" alt="Logo preview">
                         </div>
-                        <button class="choose-file-btn" onclick="document.getElementById('bannerLogoInput').click()">
-                            Choose Logo File
-                        </button>
-                        <input type="file" id="bannerLogoInput" hidden accept="image/*">
+                        <input type="file" id="bannerLogoInput" accept="image/*" onchange="handleFileSelect(this)">
+                        <input type="hidden" id="editingBannerId" value="">
                     </div>
 
                     <div class="form-group">
@@ -1154,7 +1152,10 @@
                         </div>
                     </div>
                 </div>
-                <button class="submit-btn" onclick="addBanner()">Add Banner</button>
+                <div class="button-group">
+                    <button id="bannerSubmitBtn" class="submit-btn" onclick="addBanner()">Add Banner</button>
+                    <button id="bannerCancelBtn" type="button" onclick="cancelBannerEdit()" class="cancel-btn" style="margin-left: 10px; display: none;">Cancel</button>
+                </div>
             </div>
 
             <div class="items-list" id="bannersList">
@@ -1194,38 +1195,49 @@
                         
                         <div class="payment-methods-section">
                             <h4>Payment Methods</h4>
-                            <div class="payment-methods-checkboxes">
-                                <div class="payment-method">
-                                    <input type="checkbox" name="payment_methods" value="visa">
-                                    <label>Visa</label>
-                                </div>
-                                <div class="payment-method">
-                                    <input type="checkbox" name="payment_methods" value="mastercard">
-                                    <label>Mastercard</label>
-                                </div>
-                                <div class="payment-method">
-                                    <input type="checkbox" name="payment_methods" value="revolut">
-                                    <label>Revolut</label>
-                                </div>
-                                <div class="payment-method">
-                                    <input type="checkbox" name="payment_methods" value="trustly">
-                                    <label>Trustly</label>
-                                </div>
-                                <div class="payment-method">
-                                    <input type="checkbox" name="payment_methods" value="bank">
-                                    <label>Bank Transfer</label>
-                                </div>
-                                <div class="payment-method">
-                                    <input type="checkbox" name="payment_methods" value="btc">
-                                    <label>Bitcoin</label>
-                                </div>
-                                <div class="payment-method">
-                                    <input type="checkbox" name="payment_methods" value="eth">
-                                    <label>Ethereum</label>
-                                </div>
-                                <div class="payment-method">
-                                    <input type="checkbox" name="payment_methods" value="neteller">
-                                    <label>Neteller</label>
+                            <div class="payment-methods-container">
+                                <button type="button" onclick="selectAllPaymentMethods()" class="btn btn-secondary mb-2">Select All Payment Methods</button>
+                                <div class="payment-methods-grid">
+                                    <div class="payment-method">
+                                        <input type="checkbox" name="payment_methods" value="visa" id="visa">
+                                        <label for="visa">Visa</label>
+                                    </div>
+                                    <div class="payment-method">
+                                        <input type="checkbox" name="payment_methods" value="mastercard" id="mastercard">
+                                        <label for="mastercard">Mastercard</label>
+                                    </div>
+                                    <div class="payment-method">
+                                        <input type="checkbox" name="payment_methods" value="neteller" id="neteller">
+                                        <label for="neteller">Neteller</label>
+                                    </div>
+                                    <div class="payment-method">
+                                        <input type="checkbox" name="payment_methods" value="revolut" id="revolut">
+                                        <label for="revolut">Revolut</label>
+                                    </div>
+                                    <div class="payment-method">
+                                        <input type="checkbox" name="payment_methods" value="trustly" id="trustly">
+                                        <label for="trustly">Trustly</label>
+                                    </div>
+                                    <div class="payment-method">
+                                        <input type="checkbox" name="payment_methods" value="btc" id="btc">
+                                        <label for="btc">Bitcoin</label>
+                                    </div>
+                                    <div class="payment-method">
+                                        <input type="checkbox" name="payment_methods" value="eth" id="eth">
+                                        <label for="eth">Ethereum</label>
+                                    </div>
+                                    <div class="payment-method">
+                                        <input type="checkbox" name="payment_methods" value="bank" id="bank">
+                                        <label for="bank">Bank Transfer</label>
+                                    </div>
+                                    <div class="payment-method">
+                                        <input type="checkbox" name="payment_methods" value="skrill" id="skrill">
+                                        <label for="skrill">Skrill</label>
+                                    </div>
+                                    <div class="payment-method">
+                                        <input type="checkbox" name="payment_methods" value="applepay" id="applepay">
+                                        <label for="applepay">Apple Pay</label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1676,24 +1688,25 @@
             const url = editingId ? `/api/top-rated-casinos/${editingId}` : '/api/top-rated-casinos';
             const method = editingId ? 'PUT' : 'POST';
 
-            fetch(url, {
-                method: method,
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showAlert('Casino ' + (editingId ? 'updated' : 'added') + ' successfully!', true);
+            try {
+                showAlert('Adding casino...', true);
+                const response = await fetch(url, {
+                    method: method,
+                    body: formData
+                });
+
+                if (response.ok) {
+                    showAlert('Casino added successfully', true);
                     resetForm('casino');
-                    loadCasinos();
+                    await loadCasinos(); // Wait for casinos to load
                 } else {
-                    showAlert('Error: ' + data.message, false);
+                    const errorMessage = await response.json();
+                    throw new Error(errorMessage.error || 'Failed to add casino');
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error:', error);
-                showAlert('An error occurred while saving the casino', false);
-            });
+                showAlert('Error adding casino', false);
+            }
         }
 
         // Delete casino with confirmation
@@ -1814,8 +1827,97 @@
             selectedBannerColor = button.dataset.color;
         }
 
+        // Function to edit banner
+        async function editBanner(id) {
+            try {
+                const response = await fetch(`/api/banners/${id}`);
+                const banner = await response.json();
+                
+                // Fill form with banner data
+                document.getElementById('bannerCasinoName').value = banner.casino_name;
+                document.getElementById('bannerHeader').value = banner.bonus_amount;
+                document.getElementById('bannerSubtext').value = banner.bonus_extra;
+                document.getElementById('bannerRedirectUrl').value = banner.redirect_url;
+                document.getElementById('bannerLogoPreview').src = banner.logo_path;
+                document.getElementById('editingBannerId').value = id;
+                
+                // Set the banner color
+                document.querySelectorAll('.color-btn').forEach(btn => {
+                    if (btn.dataset.color === banner.background_color) {
+                        btn.classList.add('active');
+                        selectedBannerColor = banner.background_color;
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                // Change button text and form title
+                document.getElementById('bannerSubmitBtn').textContent = 'Save Changes';
+                document.getElementById('bannerFormTitle').textContent = 'Edit Banner';
+                document.getElementById('bannerCancelBtn').style.display = 'inline-block';
+                
+                // Scroll to form
+                document.getElementById('bannerForm').scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                console.error('Error loading banner:', error);
+                showAlert('Error loading banner data', false);
+            }
+        }
+
+        // Function to save edited banner
+        async function saveEditedBanner() {
+            const id = document.getElementById('editingBannerId').value;
+            if (!id) {
+                return addBanner(); // If no ID, treat as new banner
+            }
+
+            const formData = new FormData();
+            formData.append('casino_name', document.getElementById('bannerCasinoName').value);
+            formData.append('bonus_amount', document.getElementById('bannerHeader').value);
+            formData.append('bonus_extra', document.getElementById('bannerSubtext').value);
+            formData.append('redirect_url', document.getElementById('bannerRedirectUrl').value);
+            formData.append('background_color', selectedBannerColor);
+
+            const logoInput = document.getElementById('bannerLogoInput');
+            if (logoInput.files.length > 0) {
+                formData.append('logo', logoInput.files[0]);
+            }
+
+            try {
+                const response = await fetch(`/api/banners/${id}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.error || 'Failed to update banner');
+                }
+
+                showAlert('Banner updated successfully!', true);
+                resetForm('banner');
+                document.getElementById('bannerSubmitBtn').textContent = 'Add Banner';
+                document.getElementById('bannerFormTitle').textContent = 'Add New Banner';
+                document.getElementById('editingBannerId').value = '';
+                document.getElementById('bannerCancelBtn').style.display = 'none';
+                loadBanners();
+            } catch (error) {
+                console.error('Error updating banner:', error);
+                showAlert(error.message || 'Error updating banner', false);
+            }
+        }
+
+        // Function to cancel banner edit
+        function cancelBannerEdit() {
+            resetForm('banner');
+            document.getElementById('bannerSubmitBtn').textContent = 'Add Banner';
+            document.getElementById('bannerFormTitle').textContent = 'Add New Banner';
+            document.getElementById('editingBannerId').value = '';
+            document.getElementById('bannerCancelBtn').style.display = 'none';
+        }
+
         // Function to edit casino
-        function editCasino(casino) {
+        async function editCasino(casino) {
             // Fill form with casino data
             document.getElementById('casinoName').value = casino.casino_name;
             document.getElementById('depositBonus').value = casino.deposit_bonus;
@@ -1894,28 +1996,22 @@
 
         // Function to save edited casino
         async function saveEditedCasino(id) {
-            const casinoName = document.getElementById('casinoName').value;
-            const depositBonus = document.getElementById('depositBonus').value;
-            const freeSpins = document.getElementById('freeSpins').value;
-            const redirectUrl = document.getElementById('redirectUrl').value;
-            const features = document.getElementById('features').value;
-            const isExclusive = document.getElementById('isExclusive').checked;
-            const logoFile = document.getElementById('casinoLogoFile').files[0];
-            
-            // Get selected payment methods
-            const selectedPaymentMethods = Array.from(document.querySelectorAll('input[name="payment_methods"]:checked')).map(cb => cb.value);
-
             const formData = new FormData();
-            formData.append('id', id);
-            formData.append('casino_name', casinoName);
-            formData.append('deposit_bonus', depositBonus);
-            formData.append('free_spins', freeSpins || '');
-            formData.append('redirect_url', redirectUrl);
-            formData.append('features', features);
-            formData.append('is_exclusive', isExclusive);
+            formData.append('casino_name', document.getElementById('casinoName').value);
+            formData.append('deposit_bonus', document.getElementById('depositBonus').value);
+            formData.append('free_spins', document.getElementById('freeSpins').value || '');
+            formData.append('redirect_url', document.getElementById('redirectUrl').value);
+            formData.append('features', document.getElementById('features').value);
+            formData.append('is_exclusive', document.getElementById('isExclusive').checked);
             formData.append('rating', currentRating);
+
+            // Get selected payment methods
+            const selectedPaymentMethods = Array.from(
+                document.querySelectorAll('input[name="payment_methods"]:checked')
+            ).map(cb => cb.value);
             formData.append('payment_methods', JSON.stringify(selectedPaymentMethods));
 
+            const logoFile = document.getElementById('casinoLogoFile').files[0];
             if (logoFile) {
                 formData.append('logo', logoFile);
             }
@@ -1926,18 +2022,19 @@
                     body: formData
                 });
 
-                if (response.ok) {
-                    showAlert('Casino updated successfully!', true);
-                    resetForm('casino');
-                    loadCasinos();
-                    cancelEdit();
-                } else {
+                if (!response.ok) {
                     const error = await response.json();
-                    showAlert(error.error || 'Error updating casino', false);
+                    throw new Error(error.error || 'Failed to update casino');
                 }
+
+                showAlert('Casino updated successfully!', true);
+                resetForm('casino');
+                document.getElementById('submitBtn').textContent = 'Add Casino';
+                document.getElementById('cancelBtn').style.display = 'none';
+                loadCasinos();
             } catch (error) {
                 console.error('Error updating casino:', error);
-                showAlert('Error updating casino', false);
+                showAlert(error.message || 'Error updating casino', false);
             }
         }
 
@@ -1947,7 +2044,7 @@
             const paymentMethod = document.createElement('div');
             paymentMethod.className = 'payment-method';
             paymentMethod.innerHTML = `
-                <input type="checkbox" name="payment_methods" value="visa">
+                <input type="checkbox" name="payment_methods" value="visa.png">
                 <label>Visa</label>
             `;
             paymentMethods.appendChild(paymentMethod);
@@ -1984,6 +2081,14 @@
             
             html += '</div>';
             return html;
+        }
+
+        // Function to select all payment methods
+        function selectAllPaymentMethods() {
+            const checkboxes = document.querySelectorAll('input[name="payment_methods"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
         }
     </script>
 </body>

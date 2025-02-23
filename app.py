@@ -204,6 +204,11 @@ def get_banners():
     banners = Banner.query.order_by(Banner.order).all()
     return jsonify([banner_to_dict(b) for b in banners])
 
+@app.route('/api/banners/<int:id>', methods=['GET'])
+def get_banner(id):
+    banner = Banner.query.get_or_404(id)
+    return jsonify(banner_to_dict(banner))
+
 @app.route('/api/banners', methods=['POST'])
 @login_required
 def add_banner():
@@ -255,36 +260,30 @@ def add_banner():
 def update_banner(id):
     try:
         banner = Banner.query.get_or_404(id)
-        data = request.get_json()
-
-        # If setting this banner as focused for any page, unfocus all other banners for that page
-        if data.get('is_focused') == 'true':
-            Banner.query.filter(Banner.id != id).update({'is_focused': False})
-        if data.get('is_focused_new') == 'true':
-            Banner.query.filter(Banner.id != id).update({'is_focused_new': False})
-        if data.get('is_focused_pp') == 'true':
-            Banner.query.filter(Banner.id != id).update({'is_focused_pp': False})
+        
+        # Handle form data
+        if request.form:
+            data = request.form
+            file = request.files.get('logo')
+            if file:
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                banner.logo_path = f'/static-demo/pictures/{filename}'
+        else:
+            data = request.get_json()
 
         # Update banner fields
-        if 'is_focused' in data:
-            banner.is_focused = data['is_focused'] == 'true'
-        if 'is_focused_new' in data:
-            banner.is_focused_new = data['is_focused_new'] == 'true'
-        if 'is_focused_pp' in data:
-            banner.is_focused_pp = data['is_focused_pp'] == 'true'
-
         banner.casino_name = data.get('casino_name', banner.casino_name)
-        banner.logo_path = data.get('logo_path', banner.logo_path)
         banner.bonus_amount = data.get('bonus_amount', banner.bonus_amount)
         banner.bonus_extra = data.get('bonus_extra', banner.bonus_extra)
-        banner.order = data.get('order', banner.order)
-        banner.background_color = data.get('background_color', banner.background_color)
         banner.redirect_url = data.get('redirect_url', banner.redirect_url)
+        banner.background_color = data.get('background_color', banner.background_color)
 
         db.session.commit()
         return jsonify({'message': 'Banner updated successfully'})
     except Exception as e:
         db.session.rollback()
+        logging.error(f"Error updating banner: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/banners/<int:id>', methods=['DELETE'])
@@ -404,31 +403,19 @@ def add_top_rated_casino():
 
         db.session.add(casino)
         db.session.commit()
-
+        logging.info(f"Casino added successfully: {casino.casino_name}")
         return jsonify({
-            'message': 'Casino added successfully',
-            'casino': {
-                'id': casino.id,
-                'casino_name': casino.casino_name,
-                'logo_path': casino.logo_path,
-                'deposit_bonus': casino.deposit_bonus,
-                'free_spins': casino.free_spins,
-                'redirect_url': casino.redirect_url,
-                'rating': casino.rating,
-                'features': casino.features,
-                'is_exclusive': casino.is_exclusive,
-                'order_front': casino.order_front,
-                'order_all': casino.order_all,
-                'order_new': casino.order_new,
-                'order_pp': casino.order_pp,
-                'payment_methods': casino.payment_methods
-            }
+            'success': True,
+            'message': 'Casino added successfully'
         })
 
     except Exception as e:
-        db.session.rollback()
         logging.error(f"Error adding casino: {str(e)}")
-        return jsonify({'error': str(e)}), 400
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 400
 
 @app.route('/api/top-rated-casinos/<int:id>', methods=['PUT'])
 @login_required

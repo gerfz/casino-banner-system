@@ -58,7 +58,6 @@
             position: relative;
             border-radius: 12px;
             padding: 20px;
-            margin: 10px;
             background-size: 100% 100% !important;
         }
 
@@ -137,14 +136,17 @@
     <footer class="site-footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h4>About Us</h4>
-                <p>Your trusted source for the best online casino reviews and bonuses.</p>
+                <h3>About Me</h3>
+                <p>With thousands of subscribers, Ysivitonen has become a well-known figure in the online casino community. He streams his gameplay from different online casinos, giving his viewers a chance to see how he plays and what strategies he uses.</p>
             </div>
             <div class="footer-section">
                 <h4>Quick Links</h4>
-                <a href="#top-casinos">Top Casinos</a>
-                <a href="#new-casinos">New Casinos</a>
-                <a href="giveaway.html">Giveaway</a>
+                <ul>
+                    <li><a href="/all-casinos">All Casinos</a></li>
+                    <li><a href="/new-casinos">New Casinos</a></li>
+                    <li><a href="/top-pp">Top P&amp;P</a></li>
+                    <li><a href="/giveaway">Giveaway</a></li>
+                </ul>
             </div>
         </div>
         <div class="footer-bottom">
@@ -217,7 +219,12 @@
                             <div class="featured-casino" style="background: ${makeColorTransparent(focusedBanner.background_color)}">
                                 <div class="casino-content">
                                     <div class="featured-logo">
-                                        <img src="${focusedBanner.logo_path}" alt="${focusedBanner.casino_name} logo" onerror="this.src='/static-demo/pictures/placeholder.png'">
+                                        <div class="logo-side">
+                                            <img src="${focusedBanner.logo_path}" alt="${focusedBanner.casino_name} logo" onerror="this.src='/static-demo/pictures/placeholder.png'">
+                                        </div>
+                                        <div class="name-side">
+                                            ${focusedBanner.casino_name}
+                                        </div>
                                     </div>
                                     <div class="bonus-content">
                                         <div class="bonus-details">
@@ -262,7 +269,12 @@
                                 <span class="tier-badge">${tierBadge}</span>
                                 <div class="casino-content">
                                     <div class="featured-logo">
-                                        <img src="${banner.logo_path}" alt="${banner.casino_name} logo" onerror="this.src='/static-demo/pictures/placeholder.png'">
+                                        <div class="logo-side">
+                                            <img src="${banner.logo_path}" alt="${banner.casino_name} logo" onerror="this.src='/static-demo/pictures/placeholder.png'">
+                                        </div>
+                                        <div class="name-side">
+                                            ${banner.casino_name}
+                                        </div>
                                     </div>
                                     <div class="bonus-content">
                                         <div class="bonus-details">
@@ -361,32 +373,27 @@
 
                     return `
                         <div class="casino-card">
-                            ${casino.is_exclusive ? '<div class="exclusive-tag">EXCLUSIVE</div>' : ''}
-                            <div class="casino-left">
-                                <div class="casino-logo">
-                                    <img src="/static-demo/pictures/${casino.logo_path}" alt="${casino.casino_name}">
-                                </div>
-                                <div class="casino-info">
-                                    <h3 class="casino-name">${casino.casino_name}</h3>
-                                    <div class="stars">${displayStars(casino.rating)}</div>
+                            <img src="/static-demo/pictures/${casino.logo_path}" alt="${casino.casino_name}" class="casino-logo">
+                            <div class="casino-name">
+                                <h3>${casino.casino_name}</h3>
+                                <div class="star-rating">
+                                    ${displayStars(casino.rating)}
                                 </div>
                             </div>
-                            <div class="casino-middle">
-                                <div class="deposit-bonus">
-                                    <div class="label">DEPOSIT BONUS</div>
-                                    <div class="amount">${casino.deposit_bonus}</div>
-                                    <div class="extra">${casino.free_spins}</div>
-                                </div>
-                                <div class="casino-features">
-                                    ${featuresList}
-                                </div>
-                                <div class="payment-methods">
-                                    <div class="payment-methods-header">PAYMENT METHODS</div>
-                                    <div class="payment-methods-icons">
-                                        ${paymentMethods.map(method => `
-                                            <img src="/static-demo/pictures/${method}.png" alt="${method}">
-                                        `).join('')}
-                                    </div>
+                            <div class="deposit-bonus">
+                                <div class="label">DEPOSIT BONUS</div>
+                                <div class="amount">${casino.deposit_bonus}</div>
+                                <div class="extra">${casino.free_spins}</div>
+                            </div>
+                            <div class="casino-features">
+                                ${featuresList}
+                            </div>
+                            <div class="payment-methods">
+                                <div class="payment-methods-header">PAYMENT METHODS</div>
+                                <div class="payment-methods-icons">
+                                    ${paymentMethods.map(method => `
+                                        <img src="/static-demo/pictures/${method}.png" alt="${method}">
+                                    `).join('')}
                                 </div>
                             </div>
                             <a href="${casino.redirect_url}" class="play-btn">PLAY NOW</a>

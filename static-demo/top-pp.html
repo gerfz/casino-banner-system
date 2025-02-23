@@ -12,7 +12,9 @@
     <header class="site-header">
         <nav class="main-nav">
             <div class="nav-left">
-                <a href="/" class="logo">ysivitonen95</a>
+                <a href="/" class="logo">
+                    <img src="pictures/textonlylogo.png" alt="ysivitonen95">
+                </a>
             </div>
             <div class="nav-right">
                 <a href="/all-casinos" class="nav-link">All Casinos</a>
@@ -39,6 +41,24 @@
             </div>
         </section>
     </main>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Me</h3>
+                <p>With thousands of subscribers, Ysivitonen has become a well-known figure in the online casino community. He streams his gameplay from different online casinos, giving his viewers a chance to see how he plays and what strategies he uses.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/all-casinos">All Casinos</a></li>
+                    <li><a href="/new-casinos">New Casinos</a></li>
+                    <li><a href="/top-pp">Top P&amp;P</a></li>
+                    <li><a href="/giveaway">Giveaway</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
 
     <script>
         // Function to display star rating
@@ -67,14 +87,18 @@
                 
                 if (focusedBanner) {
                     const featuredHtml = `
-                        <div class="featured-casino" style="background-color: ${focusedBanner.background_color || '#1a1a1a'}">
-                            <img src="${focusedBanner.logo_path}" alt="${focusedBanner.casino_name}" class="casino-logo">
-                            <div class="casino-info">
-                                <div class="bonus-info">
-                                    <p class="bonus-amount">${focusedBanner.bonus_amount}</p>
-                                    <p class="bonus-extra">${focusedBanner.bonus_extra}</p>
+                        <div class="top-pp-page">
+                            <div class="featured-casino">
+                                <div class="casino-logo">
+                                    <img src="${focusedBanner.logo_path}" alt="${focusedBanner.casino_name}" class="logo-img" style="width: 100%; height: 100%;">
                                 </div>
-                                <a href="${focusedBanner.redirect_url}" class="play-btn">PLAY NOW</a>
+                                <div class="casino-info">
+                                    <div class="bonus-info">
+                                        <div class="bonus-amount">${focusedBanner.bonus_amount}</div>
+                                        <div class="bonus-extra">${focusedBanner.bonus_extra}</div>
+                                    </div>
+                                    <a href="${focusedBanner.redirect_url}" class="play-btn">PLAY NOW</a>
+                                </div>
                             </div>
                         </div>
                     `;
@@ -125,32 +149,27 @@
 
                     return `
                         <div class="casino-card">
-                            ${casino.is_exclusive ? '<div class="exclusive-tag">EXCLUSIVE</div>' : ''}
-                            <div class="casino-left">
-                                <div class="casino-logo">
-                                    <img src="/static-demo/pictures/${casino.logo_path}" alt="${casino.casino_name}">
-                                </div>
-                                <div class="casino-info">
-                                    <h3 class="casino-name">${casino.casino_name}</h3>
-                                    <div class="stars">${displayStars(casino.rating)}</div>
+                            <img src="/static-demo/pictures/${casino.logo_path}" alt="${casino.casino_name}" class="casino-logo">
+                            <div class="casino-name">
+                                <h3>${casino.casino_name}</h3>
+                                <div class="star-rating">
+                                    ${displayStars(casino.rating)}
                                 </div>
                             </div>
-                            <div class="casino-middle">
-                                <div class="deposit-bonus">
-                                    <div class="label">DEPOSIT BONUS</div>
-                                    <div class="amount">${casino.deposit_bonus}</div>
-                                    <div class="extra">${casino.free_spins}</div>
-                                </div>
-                                <div class="casino-features">
-                                    ${featuresList}
-                                </div>
-                                <div class="payment-methods">
-                                    <div class="payment-methods-header">PAYMENT METHODS</div>
-                                    <div class="payment-methods-icons">
-                                        ${paymentMethods.map(method => `
-                                            <img src="/static-demo/pictures/${method}.png" alt="${method}">
-                                        `).join('')}
-                                    </div>
+                            <div class="deposit-bonus">
+                                <div class="label">DEPOSIT BONUS</div>
+                                <div class="amount">${casino.deposit_bonus}</div>
+                                <div class="extra">${casino.free_spins}</div>
+                            </div>
+                            <div class="casino-features">
+                                ${featuresList}
+                            </div>
+                            <div class="payment-methods">
+                                <div class="payment-methods-header">PAYMENT METHODS</div>
+                                <div class="payment-methods-icons">
+                                    ${paymentMethods.map(method => `
+                                        <img src="/static-demo/pictures/${method}.png" alt="${method}">
+                                    `).join('')}
                                 </div>
                             </div>
                             <a href="${casino.redirect_url}" class="play-btn">PLAY NOW</a>
