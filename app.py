@@ -273,11 +273,38 @@ def update_banner(id):
             data = request.get_json()
 
         # Update banner fields
-        banner.casino_name = data.get('casino_name', banner.casino_name)
-        banner.bonus_amount = data.get('bonus_amount', banner.bonus_amount)
-        banner.bonus_extra = data.get('bonus_extra', banner.bonus_extra)
-        banner.redirect_url = data.get('redirect_url', banner.redirect_url)
-        banner.background_color = data.get('background_color', banner.background_color)
+        if 'casino_name' in data:
+            banner.casino_name = data.get('casino_name')
+        if 'bonus_amount' in data:
+            banner.bonus_amount = data.get('bonus_amount')
+        if 'bonus_extra' in data:
+            banner.bonus_extra = data.get('bonus_extra')
+        if 'redirect_url' in data:
+            banner.redirect_url = data.get('redirect_url')
+        if 'background_color' in data:
+            banner.background_color = data.get('background_color')
+            
+        # Handle focus flags
+        if 'is_focused' in data:
+            # First, clear all banners' focus for this page
+            if data['is_focused']:
+                for b in Banner.query.filter(Banner.id != id).all():
+                    b.is_focused = False
+            banner.is_focused = data['is_focused']
+            
+        if 'is_focused_new' in data:
+            # Clear other banners' new focus
+            if data['is_focused_new']:
+                for b in Banner.query.filter(Banner.id != id).all():
+                    b.is_focused_new = False
+            banner.is_focused_new = data['is_focused_new']
+            
+        if 'is_focused_pp' in data:
+            # Clear other banners' pp focus
+            if data['is_focused_pp']:
+                for b in Banner.query.filter(Banner.id != id).all():
+                    b.is_focused_pp = False
+            banner.is_focused_pp = data['is_focused_pp']
 
         db.session.commit()
         return jsonify({'message': 'Banner updated successfully'})

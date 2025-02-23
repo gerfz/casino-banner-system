@@ -1795,9 +1795,9 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        is_focused: page === 'all' ? 'true' : 'false',
-                        is_focused_new: page === 'new' ? 'true' : 'false',
-                        is_focused_pp: page === 'top' ? 'true' : 'false'
+                        is_focused: page === 'all',
+                        is_focused_new: page === 'new',
+                        is_focused_pp: page === 'pp'
                     })
                 });
 
@@ -1883,24 +1883,28 @@
                 formData.append('logo', logoInput.files[0]);
             }
 
+            const editingId = document.getElementById('editingBannerId').value;
+            const url = editingId ? `/api/banners/${editingId}` : '/api/banners';
+            const method = editingId ? 'PUT' : 'POST';
+
             try {
-                const response = await fetch(`/api/banners/${id}`, {
-                    method: 'PUT',
+                const response = await fetch(url, {
+                    method: method,
                     body: formData
                 });
 
-                if (!response.ok) {
+                if (response.ok) {
+                    showAlert('Banner updated successfully!', true);
+                    resetForm('banner');
+                    document.getElementById('bannerSubmitBtn').textContent = 'Add Banner';
+                    document.getElementById('bannerFormTitle').textContent = 'Add New Banner';
+                    document.getElementById('editingBannerId').value = '';
+                    document.getElementById('bannerCancelBtn').style.display = 'none';
+                    loadBanners();
+                } else {
                     const error = await response.json();
                     throw new Error(error.error || 'Failed to update banner');
                 }
-
-                showAlert('Banner updated successfully!', true);
-                resetForm('banner');
-                document.getElementById('bannerSubmitBtn').textContent = 'Add Banner';
-                document.getElementById('bannerFormTitle').textContent = 'Add New Banner';
-                document.getElementById('editingBannerId').value = '';
-                document.getElementById('bannerCancelBtn').style.display = 'none';
-                loadBanners();
             } catch (error) {
                 console.error('Error updating banner:', error);
                 showAlert(error.message || 'Error updating banner', false);

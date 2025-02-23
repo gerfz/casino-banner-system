@@ -53,3 +53,11 @@ User found in database
 Stored hash: sha256$jBoz6mzxAYCryEsR$ce3e7cdb63f14dd775b33bf055c1923dc05b0c95de5d7a62bd5688fdd624c701
 Password check result: True
 Login successful!
+
+Login attempt at 2025-02-24 00:10:44.033620
+Username: admin
+Password: 123
+User found in database
+Stored hash: sha256$RYdHRYN1QPCr78b5$2c601193dfea6bdeec3cfe1c53c87476fda1c463149c2b3671fa0eb80ada90e1
+Password check result: True
+Login successful!
