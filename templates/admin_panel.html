@@ -1347,8 +1347,8 @@
                                     onclick="setFocusedBanner(${banner.id}, 'all')">ALL</button>
                                 <button class="focus-btn new-btn ${banner.is_focused_new ? 'active' : ''}" 
                                     onclick="setFocusedBanner(${banner.id}, 'new')">NEW</button>
-                                <button class="focus-btn top-btn ${banner.is_focused_pp ? 'active' : ''}" 
-                                    onclick="setFocusedBanner(${banner.id}, 'top')">TOP</button>
+                                <button class="focus-btn pp-btn ${banner.is_focused_pp ? 'active' : ''}" 
+                                    onclick="setFocusedBanner(${banner.id}, 'pp')">P&amp;P</button>
                             </div>
                             <div class="action-buttons">
                                 <button class="edit-btn" onclick="editBanner(${banner.id})">Edit</button>
@@ -1704,7 +1704,7 @@
                     throw new Error(errorMessage.error || 'Failed to add casino');
                 }
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error adding casino:', error);
                 showAlert('Error adding casino', false);
             }
         }
