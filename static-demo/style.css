@@ -26,14 +26,8 @@ body {
 
 /* Navigation */
 .site-header {
-    background-color: rgba(26, 26, 26, 0.95);
-    padding: 1rem 2rem;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+    background: #1a1a1a;
+    padding: 5px 0;
 }
 
 .main-nav {
@@ -42,6 +36,36 @@ body {
     align-items: center;
     max-width: 1400px;
     margin: 0 auto;
+    padding: 0 20px;
+    height: 90px;
+}
+
+.nav-left .logo {
+    display: flex;
+    align-items: center;
+}
+
+.nav-left .logo img {
+    height: 65px;
+    width: auto;
+    margin: 12px 0;
+}
+
+.nav-right {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.nav-link:hover {
+    color: #ffd700;
 }
 
 .logo {
@@ -130,7 +154,7 @@ body {
 
 /* Hero Section with Carousel */
 .hero-section {
-    padding: 4rem 2rem;
+    padding: 20px 2rem;
     background: var(--gradient-dark);
     position: relative;
     overflow: hidden;
@@ -1503,4 +1527,41 @@ body {
     .single-banner .bonus-extra {
         font-size: 1.2rem;
     }
+}
+
+/* Navigation text logo */
+.nav-left .logo {
+    display: flex;
+    align-items: center;
+}
+
+.nav-left .logo img {
+    height: 50px;
+    width: auto;
+    margin: 10px 0;
+}
+
+/* Main full logo section */
+.main-logo-section {
+    width: 100%;
+    background-color: #fcc828;
+    padding-top: 15%;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-logo-section::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-image: url('pictures/newbackground.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
 }
